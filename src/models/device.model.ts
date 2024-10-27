@@ -3,7 +3,7 @@ import { RegisterDeviceProps, UpdateDeviceProps } from "@/lib/types/post.types";
 import { getUserLocation } from "./location.model";
 import { ControlState, DeviceStatus, Prisma } from "@prisma/client";
 import { differenceInMinutes, endOfYear, startOfYear, sub } from "date-fns";
-import { calcPercentageChange } from "@/lib/utils";
+
 
 export const registerDevice = async (
   data: RegisterDeviceProps,
@@ -94,69 +94,6 @@ export const getDevices = async (userId: string) => {
   });
 
   return devices;
-};
-
-export const getDevicesOverview = async (userId: string) => {
-  const _query: Prisma.DeviceWhereInput = {};
-
-  const location = await getUserLocation(userId);
-
-  if (location) {
-    _query.locationId = location.id;
-  }
-
-  const [total, active, inactive, idle, currentYear, prevYear] =
-    await Promise.all([
-      prisma.device.count({ where: _query }),
-      prisma.device.count({
-        where: {
-          ..._query,
-          status: DeviceStatus.Active,
-        },
-      }),
-      prisma.device.count({
-        where: {
-          ..._query,
-          status: DeviceStatus.Inactive,
-        },
-      }),
-      prisma.device.count({
-        where: {
-          ..._query,
-          status: DeviceStatus.Idle,
-        },
-      }),
-      prisma.device.count({
-        where: {
-          ..._query,
-          created_at: {
-            gte: startOfYear(new Date()),
-            lte: endOfYear(new Date()),
-          },
-        },
-      }),
-      prisma.device.count({
-        where: {
-          ..._query,
-          created_at: {
-            gte: startOfYear(sub(new Date(), { years: 1 })),
-            lte: endOfYear(sub(new Date(), { years: 1 })),
-          },
-        },
-      }),
-    ]);
-
-  const percentageChange = calcPercentageChange(currentYear, prevYear);
-
-  const data = {
-    total,
-    inactive,
-    active,
-    idle,
-    percentageChange,
-  };
-
-  return data;
 };
 
 export const autoDeactivateDevices = async () => {

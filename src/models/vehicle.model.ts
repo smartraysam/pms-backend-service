@@ -4,7 +4,6 @@ import prisma from "@/lib/prisma";
 import { GetVehiclesQuery, QueueOverview, User } from "@/lib/types";
 import { Prisma, TagStatus, Vehicle, VehicleType } from "@prisma/client";
 import { getUser } from "./user.model";
-import { getDefaultMonthlyData } from "@/lib/helpers/date";
 
 export const linkVehicleTag = async (vehicleId: number, tagId: number) => {
   const [vehicle, tag] = await Promise.all([

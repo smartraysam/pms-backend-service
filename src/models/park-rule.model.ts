@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import { getUserLocation } from "./location.model";
 import { ParkRule, Prisma } from "@prisma/client";
-import { Strip } from "@/lib/types";
 
 export const getParkRule = async (userId: string) => {
   const location = await getUserLocation(userId);

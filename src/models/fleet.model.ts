@@ -1,11 +1,9 @@
 import { ROLES } from "@/lib/constants/auth.const";
 import prisma from "@/lib/prisma";
 import { User } from "@/lib/types";
-import { Fleet, Prisma, Queue, QueueLocation } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { getUser } from "./user.model";
 import { Fleet as ProviderFleet } from "@/lib/types/provider-list";
-import { createQueue, getQueueById, updateQueue } from "./queue.model";
-import { createParkActivity } from "./park-activities.model";
 
 export const createFleet = async (fleetData: Prisma.FleetCreateInput) => {
   try {

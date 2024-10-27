@@ -32,7 +32,6 @@
     "tsconfig-paths": "^4.2.0"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.51.15",
     "@testing-library/jest-dom": "^6.4.8",
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.0",
