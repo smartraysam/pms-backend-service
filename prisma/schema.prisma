@@ -1,15 +1,329 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  createdAt DateTime @default(now())
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  name          String
+  password      String
+  managerId     Int?
+  phone_number  String
+  roleId        Int
+  notifications Notification[]
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @default(now()) @updatedAt
+
+  role                   Role                   @relation(fields: [roleId], references: [id])
+  location               Location?
+  AuditLog               AuditLog[]
+  incoming_notifications IncomingNotification[]
+}
+
+enum TokenTypes {
+  accountVerificationToken
+  passwordResetToken
+}
+
+model Token {
+  id         Int        @id @default(autoincrement())
+  type       TokenTypes
+  email      String
+  value      String
+  created_at DateTime   @default(now())
+  updated_at DateTime   @default(now()) @updatedAt
+}
+
+model Location {
+  id         Int      @id @default(autoincrement())
+  name       String
+  address    String
+  adminId    Int      @unique()
+  logo       String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  admin    User      @relation(fields: [adminId], references: [id])
+  parkRule ParkRule?
+  devices  Device[]
+  Fleet    Fleet[]
+}
+
+model Role {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  permissions RolePermission[]
+  users       User[]
+}
+
+model Permission {
+  id         Int      @id @default(autoincrement())
+  action     Action
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  roles RolePermission[]
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  role       Role       @relation(fields: [roleId], references: [id])
+  permission Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+}
+
+model AppEntity {
+  id         Int      @id @default(autoincrement())
+  name       String
+  path       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Device {
+  id           Int          @id @default(autoincrement())
+  deviceId     String
+  name         String
+  ip           String?
+  networkId    String?
+  status       DeviceStatus @default(Active)
+  ctlstate     ControlState @default(Close)
+  installPoint String
+  locationId   Int
+  location     Location     @relation(fields: [locationId], references: [id])
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @default(now()) @updatedAt
+}
+
+enum DeviceStatus {
+  Active
+  Inactive
+  Idle
+}
+
+enum ControlState {
+  Open
+  Close
+}
+
+model Tag {
+  id         Int       @id @default(autoincrement())
+  tagId      String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+  vehicles   Vehicle[]
+  status     TagStatus @default(Unassigned)
+}
+
+enum TagStatus {
+  Unassigned
+  Assigned
+}
+
+model Vehicle {
+  id             Int            @id @default(autoincrement())
+  providerId     Int
+  fleetId        Int
+  firstName      String
+  lastName       String
+  mobile         String
+  fleet          Fleet          @relation(references: [id], fields: [fleetId])
+  walletBalance  Int            @default(0)
+  baseLocationId Int?
+  vehicleNumber  String
+  serviceTypeId  Int
+  serviceModel   String
+  specialDuty    Boolean        @default(false)
+  type           VehicleType    @default(STANDARD)
+  status         String
+  tagId          Int?
+  isStaffVehicle Boolean        @default(false)
+  tag            Tag?           @relation(references: [id], fields: [tagId])
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @default(now()) @updatedAt
+  notifications  Notification[]
+  queues         Queue[]
+  ParkActivity   ParkActivity[]
+}
+
+model Fleet {
+  id             Int       @id @default(autoincrement())
+  name           String
+  email          String
+  company        String
+  mobile         String
+  fleetId        Int       @default(0)
+  baseLocationId Int?
+  walletBalance  Int       @default(0)
+  status         Int
+  vehicles       Vehicle[]
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @default(now()) @updatedAt
+  priority       Boolean   @default(false)
+
+  locationId Int?
+  location   Location? @relation(fields: [locationId], references: [id])
+
+  @@unique([name, email, company])
+}
+
+model ServiceType {
+  id               Int      @id @default(autoincrement())
+  name             String
+  serviceTypeId    Int      @default(0)
+  capacity         Int
+  fixed            Int
+  price            Int
+  minute           Int
+  hour             Int
+  waitingFreeMins  Int
+  waitingMinCharge Int
+  baseLocationId   Int?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @default(now()) @updatedAt
+}
+
+model ParkRule {
+  id                     Int      @id @default(autoincrement())
+  minWalletBalance       Int?
+  minPickupCharge        Int?
+  sessionStartTime       String?
+  suvRowCallMaxNumber    Int?
+  executiveRowCallMaxNum Int?
+  maxCompanyQueueCall    Int?
+  minCompanyDriverCount  Int?
+  loadingBayQueueTimeout Int?
+  recallExpireTime       String?
+  registerCloseTime      String?
+  locationId             Int      @unique
+  location               Location @relation(fields: [locationId], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model Queue {
+  id            Int           @id @default(autoincrement())
+  vehicleId     Int
+  vehicle       Vehicle       @relation(references: [id], fields: [vehicleId])
+  entryTime     DateTime
+  exitTime      DateTime?
+  callTime      DateTime?
+  queueLocation QueueLocation @default(Parking)
+  exitStatus    Boolean       @default(false)
+  debitStatus   Boolean       @default(false)
+  rowCallStatus Boolean       @default(false)
+  payStatus     Boolean       @default(false)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model AuditLog {
+  id            Int      @id @default(autoincrement())
+  actionType    String
+  performedBy   User     @relation(fields: [userId], references: [id])
+  userId        Int
+  actionOn      String?
+  actionDetails String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now()) @updatedAt
+}
+
+model Notification {
+  id       Int       @id @default(autoincrement())
+  message  String
+  senderId Int
+  sender   User      @relation(references: [id], fields: [senderId])
+  vehicles Vehicle[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model IncomingNotification {
+  id      Int                        @id @default(autoincrement())
+  message String?
+  isRead  Boolean                    @default(false)
+  entity  IncomingNotificationEntity
+  userId  Int
+  user    User                       @relation(references: [id], fields: [userId])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model ParkActivity {
+  id            Int           @id @default(autoincrement())
+  vehicleId     Int
+  vehicle       Vehicle       @relation(fields: [vehicleId], references: [id])
+  debitStatus   Boolean       @default(false)
+  status        PathStatus    @default(ENTRY)
+  debitedAmount Float         @default(0)
+  debitType     DebitType     @default(None)
+  queueLocation QueueLocation
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+}
+
+enum DebitType {
+  Standard
+  InstantRide
+  None
+}
+
+enum QueueLocation {
+  Parking
+  Loading
+  RowCall
+  Exit
+}
+
+enum Action {
+  CREATE
+  EDIT
+  DELETE
+  VIEW
+}
+
+enum Status {
+  APPROVED
+  UNAPPROVED
+}
+
+enum PathStatus {
+  EXIT
+  ENTRY
+}
+
+enum IncomingNotificationEntity {
+  NEW_TAG_SCANNED
+  VEHICLE_ENTRY
+  VEHICLE_DEPARTURE
+  // e.t.c
+}
+
+enum VehicleType {
+  STANDARD
+  SUV
+  EXECUTIVE
 }

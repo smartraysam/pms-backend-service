@@ -8,10 +8,42 @@ import {
 } from "../lib/types";
 import crypto from "crypto";
 import { Prisma, TokenTypes } from "@prisma/client";
-import { NewOperationalManager } from "@/lib/types/post.types";
+import { NewAdminData } from "@/lib/types/post.types";
 import { ROLES } from "@/lib/constants/auth.const";
 
-export const register = async () => {};
+export const registerAdmin = async (data: NewAdminData) => {
+  const passwordSaltFactor = await bcrypt.genSalt(12);
+  const hashedPassword = await bcrypt.hash(
+    data.phone_number,
+    passwordSaltFactor
+  );
+  const prevUser = await prisma.user.findFirst({
+    where: {
+      OR: [{ email: data.email }, { phone_number: data.phone_number }],
+    },
+  });
+
+  if (prevUser)
+    throw new Error(
+      "Oops! a user with this email address or phone number already exists"
+    );
+
+  data.password = hashedPassword;
+  if(data.role===ROLES.SUPER_MANAGER){
+    data.role = { connect: { name: ROLES.SUPER_MANAGER } };
+  }else if(data.role===ROLES.OPERATIONAL_MANAGER){
+    data.role = { connect: { name: ROLES.OPERATIONAL_MANAGER } };
+    data.managerId = data.adminId ? parseInt(data.adminId) : undefined;
+  }else if(data.role===ROLES.LOCATION_MANAGER){
+    data.role = { connect: { name: ROLES.LOCATION_MANAGER } };
+    data.managerId = data.adminId ? parseInt(data.adminId) : undefined;
+  }
+  return await prisma.user.create({
+    data: {
+      ...data,
+    },
+  });
+};
 
 export const getUser = async (id: string | number) => {
   return await prisma.user.findUnique({ where: { id: Number(id) } });
@@ -28,42 +60,12 @@ export const getUsersRole = async (role?: Role) => {
 };
 
 export const getOperationalManagersUnderLocationManagers = async (
-  locationManagerId: string,
+  locationManagerId: string
 ) => {
   return await prisma.user.findMany({
     where: {
       role: { name: ROLES.OPERATIONAL_MANAGER },
       managerId: parseInt(locationManagerId),
-    },
-  });
-};
-
-export const createOperationalManager = async ({
-  data,
-  adminId,
-}: NewOperationalManager) => {
-  const passwordSaltFactor = await bcrypt.genSalt(12);
-  const hashedPassword = await bcrypt.hash(
-    data.phone_number,
-    passwordSaltFactor,
-  );
-  const prevUser = await prisma.user.findFirst({
-    where: {
-      OR: [{ email: data.email }, { phone_number: data.phone_number }],
-    },
-  });
-
-  if (prevUser)
-    throw new Error(
-      "Oops! a user with this email address or phone number already exists",
-    );
-
-  return await prisma.user.create({
-    data: {
-      ...data,
-      password: hashedPassword,
-      role: { connect: { name: ROLES.OPERATIONAL_MANAGER } },
-      managerId: parseInt(adminId),
     },
   });
 };
@@ -76,7 +78,7 @@ export const deleteOperationalManager = async (id: number) => {
 
 export const updateOperationalManager = async (
   id: number,
-  data: Partial<Prisma.UserUpdateInput>,
+  data: Partial<Prisma.UserUpdateInput>
 ) => {
   if (data.email) {
     if (
@@ -88,7 +90,7 @@ export const updateOperationalManager = async (
       })
     ) {
       throw new Error(
-        "Oops! another user with this email address already exists",
+        "Oops! another user with this email address already exists"
       );
     }
   }
@@ -103,7 +105,7 @@ export const updateOperationalManager = async (
       })
     ) {
       throw new Error(
-        "Oops! another user with this phone number already exists",
+        "Oops! another user with this phone number already exists"
       );
     }
   }
@@ -195,7 +197,7 @@ export const resetPassword = async ({
 
 export const changePassword = async (
   userId: string,
-  props: ChangePasswordProps,
+  props: ChangePasswordProps
 ) => {
   const user = await prisma.user.findUnique({
     where: {
@@ -207,7 +209,7 @@ export const changePassword = async (
 
   const isValidPassword = await bcrypt.compare(
     props.currentPassword,
-    user.password,
+    user.password
   );
 
   if (!isValidPassword) throw new Error("Current password is incorrect");
@@ -215,7 +217,7 @@ export const changePassword = async (
   const passwordSaltFactor = await bcrypt.genSalt(12);
   const hashedPassword = await bcrypt.hash(
     props.newPassword,
-    passwordSaltFactor,
+    passwordSaltFactor
   );
 
   await prisma.user.update({

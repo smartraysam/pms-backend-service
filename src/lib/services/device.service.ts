@@ -1,12 +1,9 @@
 import { errorHandler } from "../config/error-handler";
 import https from "../config/http";
 import { RegisterDeviceProps, UpdateDeviceProps } from "../types/post.types";
-import { toastSuccess } from "../utils/toast";
-
 export const registerDevice = async (props: RegisterDeviceProps) => {
   try {
     const response = await https.post("/device", props);
-    toastSuccess("Device created successfully");
     return response.data;
   } catch (error) {
     errorHandler(error);
@@ -22,7 +19,6 @@ export const updateDevice = async ({
 }) => {
   try {
     const response = await https.put(`/device/${id}`, props);
-    toastSuccess("Device updated successfully");
     return response.data;
   } catch (error) {
     errorHandler(error);
@@ -32,7 +28,6 @@ export const updateDevice = async ({
 export const deleteDevice = async (id: number) => {
   try {
     const response = await https.delete(`/device/${id}`);
-    toastSuccess("Device deleted successfully");
     return response.data;
   } catch (error) {
     errorHandler(error);
