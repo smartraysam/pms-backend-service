@@ -3,7 +3,6 @@ import prisma from "@/lib/prisma";
 import { User } from "@/lib/types";
 import { Prisma } from "@prisma/client";
 import { getUser } from "./user.model";
-import { Fleet as ProviderFleet } from "@/lib/types/provider-list";
 
 export const createFleet = async (fleetData: Prisma.FleetCreateInput) => {
   try {
@@ -127,59 +126,10 @@ export const getFleetCount = async (user?: User) => {
 
 export const updateFleet = async (
   where: Prisma.FleetWhereUniqueInput,
-  data: Prisma.FleetUpdateInput,
+  data: Prisma.FleetUpdateInput
 ) => {
   return await prisma.fleet.update({ where, data });
 };
-
-export const runFleetOperation = async (
-  param: ProviderFleet[],
-  locationId: string,
-) => {
-  let numOfSuccess = 0;
-
-  const existingFleets = await prisma.fleet.findMany({
-    where: {
-      fleetId: {
-        in: param.map((fleet) => fleet.id),
-      },
-    },
-  });
-
-  for (const providerFleet of param) {
-    const fleet = existingFleets.find(
-      ({ fleetId }) => fleetId == providerFleet.id,
-    );
-
-    if (fleet) {
-      await updateFleet(
-        {
-          id: fleet?.id,
-        },
-        {
-          walletBalance: providerFleet.wallet_balance,
-          baseLocationId: parseInt(locationId),
-        },
-      );
-    } else {
-      await createFleet({
-        name: providerFleet.name,
-        email: providerFleet.email,
-        company: providerFleet.company,
-        mobile: providerFleet.mobile,
-        fleetId: providerFleet.id,
-        walletBalance: providerFleet.wallet_balance,
-        status: providerFleet.status,
-        baseLocationId: parseInt(locationId),
-      });
-    }
-
-    numOfSuccess++;
-  }
-
-  return numOfSuccess;
-};
-
 export const updateFleetPriority = async (id: number, priority: boolean) => {
   const fleet = await prisma.fleet.update({
     where: { id },

@@ -9,8 +9,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL")
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
 }
 
 model User {
@@ -24,7 +24,6 @@ model User {
   notifications Notification[]
   created_at    DateTime       @default(now())
   updated_at    DateTime       @default(now()) @updatedAt
-
   role                   Role                   @relation(fields: [roleId], references: [id])
   location               Location?
   AuditLog               AuditLog[]
@@ -53,11 +52,12 @@ model Location {
   logo       String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
-  admin    User      @relation(fields: [adminId], references: [id])
-  parkRule ParkRule?
-  devices  Device[]
-  Fleet    Fleet[]
+  admin                User                   @relation(fields: [adminId], references: [id])
+  parkRule             ParkRule?
+  devices              Device[]
+  Fleet                Fleet[]
+  Notification         Notification[]
+  IncomingNotification IncomingNotification[]
 }
 
 model Role {
@@ -65,7 +65,6 @@ model Role {
   name       String   @unique
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
-
   permissions RolePermission[]
   users       User[]
 }
@@ -75,7 +74,6 @@ model Permission {
   action     Action
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
   roles RolePermission[]
 }
 
@@ -179,10 +177,7 @@ model Fleet {
   created_at     DateTime  @default(now())
   updated_at     DateTime  @default(now()) @updatedAt
   priority       Boolean   @default(false)
-
-  locationId Int?
-  location   Location? @relation(fields: [locationId], references: [id])
-
+  location Location? @relation(fields: [baseLocationId], references: [id])
   @@unique([name, email, company])
 }
 
@@ -216,7 +211,6 @@ model ParkRule {
   registerCloseTime      String?
   locationId             Int      @unique
   location               Location @relation(fields: [locationId], references: [id])
-
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
 }
@@ -233,7 +227,6 @@ model Queue {
   debitStatus   Boolean       @default(false)
   rowCallStatus Boolean       @default(false)
   payStatus     Boolean       @default(false)
-
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
 }
@@ -245,28 +238,32 @@ model AuditLog {
   userId        Int
   actionOn      String?
   actionDetails String?
+  locationId    Int?
   created_at    DateTime @default(now())
   updated_at    DateTime @default(now()) @updatedAt
 }
 
 model Notification {
-  id       Int       @id @default(autoincrement())
-  message  String
-  senderId Int
-  sender   User      @relation(references: [id], fields: [senderId])
-  vehicles Vehicle[]
-
+  id         Int       @id @default(autoincrement())
+  message    String
+  senderId   Int?
+  sender     User?     @relation(references: [id], fields: [senderId])
+  vehicles   Vehicle[]
+  locationId Int?
+  location   Location? @relation(references: [id], fields: [locationId])
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
 }
 
 model IncomingNotification {
-  id      Int                        @id @default(autoincrement())
-  message String?
-  isRead  Boolean                    @default(false)
-  entity  IncomingNotificationEntity
-  userId  Int
-  user    User                       @relation(references: [id], fields: [userId])
+  id         Int                        @id @default(autoincrement())
+  message    String?
+  isRead     Boolean                    @default(false)
+  entity     IncomingNotificationEntity
+  userId     Int?
+  user       User?                      @relation(references: [id], fields: [userId])
+  locationId Int?
+  location   Location?                  @relation(references: [id], fields: [locationId])
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -319,7 +316,6 @@ enum IncomingNotificationEntity {
   NEW_TAG_SCANNED
   VEHICLE_ENTRY
   VEHICLE_DEPARTURE
-  // e.t.c
 }
 
 enum VehicleType {
