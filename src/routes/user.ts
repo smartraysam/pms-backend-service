@@ -1,8 +1,8 @@
 import { Router, Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
+import { registerAdmin } from "@/models/user.model";
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // Get all users
 router.get("/", async (req: Request, res: Response) => {
@@ -11,11 +11,35 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 // Create a new user
-router.post("/", async (req: Request, res: Response) => {
-  const { name, email } = req.body;
+/**
+ * @swagger
+ * /api/user:
+ *   post:
+ *     summary: register a new user.
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+router.post("/user", async (req: Request, res: Response) => {
+  const { name, email, phone_number, password, role, adminId } = req.body;
   try {
-    const user = await prisma.user.create({
-      data: { name, email },
+    if (!name || !email || !phone_number || !password || !role)
+      throw new Error("Please provide all the fields");
+
+    const user = await registerAdmin({
+      name,
+      email,
+      phone_number,
+      password,
+      role,
+      adminId
     });
     res.status(201).json(user);
   } catch (error) {
