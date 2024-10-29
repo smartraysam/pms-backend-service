@@ -17,6 +17,24 @@ export const createNotification = async (
     },
   });
 };
+export const createLocationNotification = async (
+  locationId: number,
+  props: CreateNotificationProps,
+) => {
+  return await prisma.notification.create({
+    data: {
+      message: props.message,
+      vehicles: {
+        connect: props.vehicles.map((id) => ({ id })),
+      },
+      location: {
+        connect: {
+          id: locationId,
+        },
+      },
+    },
+  });
+};
 
 export const getNotifications = async (userId: number) => {
   return await prisma.notification.findMany({
