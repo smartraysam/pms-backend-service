@@ -20,7 +20,7 @@ const router = Router();
  * @swagger
  * /access-control:
  *   post:
- *     summary: Handles access control with device and tag validation.
+ *     summary: Handles access control with device and tag validation, endpoint is to be call in access control device.
  *     tags:[Access Control]
  *     requestBody:
  *       required: true
