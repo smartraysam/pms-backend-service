@@ -2,7 +2,7 @@ import { deleteOldUnlinkedTags, getTags } from "@/models/tags.model";
 import { linkVehicleTag, unlinkVehicleTag } from "@/models/vehicle.model";
 import { Router, Request, Response } from "express";
 
-const router = Router();
+const tagRoutes = Router();
 
 /**
  * @swagger
@@ -28,7 +28,7 @@ const router = Router();
  *       400:
  *         description: Error linking tag.
  */
-router.post("/link-tag", async (req: Request, res: Response) => {
+tagRoutes.post("/link-tag", async (req: Request, res: Response) => {
   const { vehicleId, tagId } = req.body;
 
   try {
@@ -63,7 +63,7 @@ router.post("/link-tag", async (req: Request, res: Response) => {
  *       400:
  *         description: Error unlinking tag.
  */
-router.post("/unlink-tag", async (req: Request, res: Response) => {
+tagRoutes.post("/unlink-tag", async (req: Request, res: Response) => {
   const { vehicleId, tagId } = req.body;
 
   try {
@@ -93,7 +93,7 @@ router.post("/unlink-tag", async (req: Request, res: Response) => {
  *       400:
  *         description: Error retrieving tags.
  */
-router.get("/get-tag", async (req: Request, res: Response) => {
+tagRoutes.get("/get-tag", async (req: Request, res: Response) => {
   const { status } = req.query;
 
   try {
@@ -117,7 +117,7 @@ router.get("/get-tag", async (req: Request, res: Response) => {
  *       400:
  *         description: Error deleting tags.
  */
-router.post("/delete-tag", async (_req: Request, res: Response) => {
+tagRoutes.post("/delete-tag", async (_req: Request, res: Response) => {
   try {
     await deleteOldUnlinkedTags();
     res.status(200).json({ message: "Old unlinked tags deleted successfully" });
@@ -126,4 +126,4 @@ router.post("/delete-tag", async (_req: Request, res: Response) => {
   }
 });
 
-export default router;
+export default tagRoutes;

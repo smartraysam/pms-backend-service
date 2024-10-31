@@ -14,7 +14,7 @@ import { getVehicleByTagId } from "@/models/vehicle.model";
 import { ControlState, TagStatus } from "@prisma/client";
 import { Router, Request, Response } from "express";
 
-const router = Router();
+const accessRoutes = Router();
 
 /**
  * @swagger
@@ -51,7 +51,7 @@ const router = Router();
  *       500:
  *         description: Internal Server Error.
  */
-router.post("/access-control", async (req: Request, res: Response) => {
+accessRoutes.post("/access-control", async (req: Request, res: Response) => {
   const { deviceId, tagId } = req.body;
   autoDeactivateDevices();
   if (
@@ -324,4 +324,4 @@ const handleAccessControl = async (deviceId: string, vehicleId: number) => {
       return accessDeniedResponse(deviceId);
   }
 };
-export default router;
+export default accessRoutes;

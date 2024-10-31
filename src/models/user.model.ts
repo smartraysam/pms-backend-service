@@ -53,6 +53,7 @@ export const getUser = async (id: string | number) => {
   return await prisma.user.findUnique({ where: { id: Number(id) } });
 };
 
+
 export const getUsersCount = async () => {
   return await prisma.vehicle.count({});
 };

@@ -4,6 +4,9 @@ import userRoutes from "@/routes/user";
 import { requestLogger, errorHandler } from "./middleware"; // Import middleware
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './swagger';
+import accessRoutes from "@/routes/access-control";
+import vehicleRoutes from "@/routes/vehicle";
+import tagRoutes from "@/routes/tags";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -21,7 +24,10 @@ app.get("/health", (req: Request, res: Response) => {
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // User Routes
-app.use("/users", userRoutes);
+app.use("/api", userRoutes);
+app.use("/api", accessRoutes);
+app.use("/api", vehicleRoutes);
+app.use("/api", tagRoutes);
 
 // Gracefully handle Prisma shutdown on server stop
 process.on("SIGINT", async () => {
