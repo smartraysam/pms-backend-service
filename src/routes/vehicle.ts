@@ -1,6 +1,15 @@
+import { VehicleStatus } from "@/lib/enums";
 import { User } from "@/lib/types";
 import { getUser } from "@/models/user.model";
-import { createVehicle, getAllVehicles, getQueueOverviewPerCompany, getVehicleByTagId, getVehiclesByStatus, getVehiclesCount, updateVehicle } from "@/models/vehicle.model";
+import {
+  createVehicle,
+  getAllVehicles,
+  getQueueOverviewPerCompany,
+  getVehicleByTagId,
+  getVehiclesByStatus,
+  getVehiclesCount,
+  updateVehicle,
+} from "@/models/vehicle.model";
 import { Vehicle } from "@prisma/client";
 import { Router, Request, Response } from "express";
 
@@ -96,7 +105,7 @@ vehicleRoutes.post("/create-vehicle", async (req: Request, res: Response) => {
 vehicleRoutes.get("/vehicles", async (req: Request, res: Response) => {
   try {
     const { userId, query } = req.body;
-    const user = await getUser(userId) as unknown as User;
+    const user = (await getUser(userId)) as unknown as User;
     if (user) {
       const vehicles = await getAllVehicles(user, query);
       res.status(200).json(vehicles);
@@ -134,7 +143,7 @@ vehicleRoutes.get("/vehicles", async (req: Request, res: Response) => {
 vehicleRoutes.get("/vehicles/count", async (req: Request, res: Response) => {
   try {
     const { userId, status } = req.body;
-    const user = await getUser(userId) as unknown as User;
+    const user = (await getUser(userId)) as unknown as User;
     if (user) {
       const count = await getVehiclesCount(status, user);
       res.status(200).json(count);
@@ -185,7 +194,7 @@ vehicleRoutes.get(
   "/vehicles/status/:status",
   async (req: Request, res: Response) => {
     try {
-      const { status } = req.body;
+      const status = req.params.status as VehicleStatus;
       const vehicles = await getVehiclesByStatus(status);
       res.status(200).json(vehicles);
     } catch (error: any) {
@@ -263,7 +272,7 @@ vehicleRoutes.get(
   "/vehicles/tag/:tagId",
   async (req: Request, res: Response) => {
     try {
-      const {tagId} = req.body;
+      const tagId = req.params.tagId;
       const vehicle = await getVehicleByTagId(Number(tagId));
       res.status(200).json(vehicle);
     } catch (error: any) {
@@ -313,9 +322,7 @@ vehicleRoutes.get(
   async (req: Request, res: Response) => {
     try {
       const { locationId } = req.body;
-      const overview = await getQueueOverviewPerCompany(
-        Number(locationId)
-      );
+      const overview = await getQueueOverviewPerCompany(Number(locationId));
       res.status(200).json(overview);
     } catch (error: any) {
       res.status(400).json({ message: error.message });
