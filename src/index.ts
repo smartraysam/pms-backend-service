@@ -7,6 +7,8 @@ import swaggerSpec from './swagger';
 import accessRoutes from "@/routes/access-control";
 import vehicleRoutes from "@/routes/vehicle";
 import tagRoutes from "@/routes/tags";
+import queueRoutes from "./routes/queue";
+import parkActivityRoutes from "./routes/park-activites";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -28,6 +30,8 @@ app.use("/api", userRoutes);
 app.use("/api", accessRoutes);
 app.use("/api", vehicleRoutes);
 app.use("/api", tagRoutes);
+app.use("/api", queueRoutes);
+app.use("/api", parkActivityRoutes);
 
 // Gracefully handle Prisma shutdown on server stop
 process.on("SIGINT", async () => {
