@@ -74,13 +74,12 @@ export const getOperationalManagersUnderLocationManagers = async (
   });
 };
 
-export const deleteOperationalManager = async (id: number) => {
+export const deleteAccount = async (id: number) => {
   const user = await prisma.user.delete({ where: { id } });
 
   if (!user) throw new Error("Oops! Operational Manager does not exist");
 };
-
-export const updateOperationalManager = async (
+export const updateUserData = async (
   id: number,
   data: Partial<Prisma.UserUpdateInput>
 ) => {
