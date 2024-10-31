@@ -28,7 +28,7 @@ const tagRoutes = Router();
  *       400:
  *         description: Error linking tag.
  */
-tagRoutes.post("/link-tag", async (req: Request, res: Response) => {
+tagRoutes.post("/tag/link-tag", async (req: Request, res: Response) => {
   const { vehicleId, tagId } = req.body;
 
   try {
@@ -63,7 +63,7 @@ tagRoutes.post("/link-tag", async (req: Request, res: Response) => {
  *       400:
  *         description: Error unlinking tag.
  */
-tagRoutes.post("/unlink-tag", async (req: Request, res: Response) => {
+tagRoutes.post("/tag/unlink-tag", async (req: Request, res: Response) => {
   const { vehicleId, tagId } = req.body;
 
   try {
@@ -93,7 +93,7 @@ tagRoutes.post("/unlink-tag", async (req: Request, res: Response) => {
  *       400:
  *         description: Error retrieving tags.
  */
-tagRoutes.get("/get-tag", async (req: Request, res: Response) => {
+tagRoutes.get("/tag/get-tag", async (req: Request, res: Response) => {
   const { status } = req.query;
 
   try {
@@ -117,7 +117,7 @@ tagRoutes.get("/get-tag", async (req: Request, res: Response) => {
  *       400:
  *         description: Error deleting tags.
  */
-tagRoutes.post("/delete-tag", async (_req: Request, res: Response) => {
+tagRoutes.post("/tag/delete-tag", async (_req: Request, res: Response) => {
   try {
     await deleteOldUnlinkedTags();
     res.status(200).json({ message: "Old unlinked tags deleted successfully" });

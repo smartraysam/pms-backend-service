@@ -9,6 +9,7 @@ import vehicleRoutes from "@/routes/vehicle";
 import tagRoutes from "@/routes/tags";
 import queueRoutes from "./routes/queue";
 import parkActivityRoutes from "./routes/park-activites";
+import authRoutes from "./routes/auth";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -24,8 +25,8 @@ app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ message: "API is running" });
 });
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-// User Routes
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api", authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", accessRoutes);
 app.use("/api", vehicleRoutes);
@@ -47,5 +48,5 @@ app.use(errorHandler); // Use error handler from middleware.ts
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
+  console.log(`Swagger docs available at http://localhost:${PORT}/api/docs`);
 });

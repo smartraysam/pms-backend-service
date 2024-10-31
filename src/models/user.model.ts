@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import prisma from "../lib/prisma";
+import jwt from "jsonwebtoken";
 import {
   ChangePasswordProps,
   LoginProps,
@@ -29,12 +30,12 @@ export const registerAdmin = async (data: NewAdminData) => {
     );
 
   data.password = hashedPassword;
-  if(data.role===ROLES.SUPER_MANAGER){
+  if (data.role === ROLES.SUPER_MANAGER) {
     data.role = { connect: { name: ROLES.SUPER_MANAGER } };
-  }else if(data.role===ROLES.OPERATIONAL_MANAGER){
+  } else if (data.role === ROLES.OPERATIONAL_MANAGER) {
     data.role = { connect: { name: ROLES.OPERATIONAL_MANAGER } };
     data.managerId = data.adminId ? parseInt(data.adminId) : undefined;
-  }else if(data.role===ROLES.LOCATION_MANAGER){
+  } else if (data.role === ROLES.LOCATION_MANAGER) {
     data.role = { connect: { name: ROLES.LOCATION_MANAGER } };
     data.managerId = data.adminId ? parseInt(data.adminId) : undefined;
   }
@@ -45,14 +46,12 @@ export const registerAdmin = async (data: NewAdminData) => {
   });
 };
 
-
 export const getUsers = async () => {
   return await prisma.user.findMany();
 };
 export const getUser = async (id: string | number) => {
   return await prisma.user.findUnique({ where: { id: Number(id) } });
 };
-
 
 export const getUsersCount = async () => {
   return await prisma.vehicle.count({});
@@ -123,6 +122,7 @@ export const updateOperationalManager = async (
 };
 
 export const login = async ({ email, password }: LoginProps) => {
+  const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
   const user = await prisma.user.findUnique({
     where: { email },
     include: { location: true },
@@ -131,10 +131,15 @@ export const login = async ({ email, password }: LoginProps) => {
   if (!user) return null;
 
   const isValidPassword = await bcrypt.compare(password, user.password);
-
   if (!isValidPassword) return null;
 
-  return user;
+  const token = jwt.sign(
+    { userId: user.id, email: user.email },
+    JWT_SECRET,
+    { expiresIn: "1h" } // Token expiration time, e.g., 1 hour
+  );
+
+  return { user, token };
 };
 
 const upsertToken = async (upsertTokenDto: Prisma.TokenCreateInput) => {

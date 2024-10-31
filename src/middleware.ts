@@ -1,4 +1,9 @@
 import { Request, Response, NextFunction } from "express";
+import "../types/express"; // Import the extended Request interface
+import jwt from "jsonwebtoken";
+import { User } from "./lib/types";
+const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"; // Replace with env variable in production
+
 
 // Paths that require authentication
 const protectedPaths = [
@@ -7,9 +12,10 @@ const protectedPaths = [
 
 // Paths related to authentication (no session required)
 const authPaths = [
-  "/login",
-  "/signup",
+  "api/auth/login",
+  "api/auth/register",
   "/health",
+  "/api/docs",
   "/",
 ];
 
@@ -21,13 +27,21 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
 
 // Authentication Middleware
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
-
   if (protectedPaths.includes(req.path)) {
-    if (authHeader === "Bearer my-secret-token") {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Unauthorized: No token provided" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    try {
+      // Verify JWT token
+      const decoded = jwt.verify(token, JWT_SECRET);
+      req.user = decoded;
       next(); // Valid token, proceed
-    } else {
-      return res.status(401).json({ message: "Unauthorized" });
+    } catch (error) {
+      return res.status(401).json({ message: "Unauthorized: Invalid token" });
     }
   } else {
     next(); // Path doesn't require authentication

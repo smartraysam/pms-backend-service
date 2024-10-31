@@ -58,7 +58,7 @@ const vehicleRoutes = Router();
  *       400:
  *         description: Error creating or updating vehicle.
  */
-vehicleRoutes.post("/create-vehicle", async (req: Request, res: Response) => {
+vehicleRoutes.post("/vehicles/create-vehicle", async (req: Request, res: Response) => {
   try {
     const vehicleData = {
       providerId: req.body.providerId,
@@ -115,8 +115,8 @@ vehicleRoutes.post("/create-vehicle", async (req: Request, res: Response) => {
  */
 vehicleRoutes.get("/vehicles", async (req: Request, res: Response) => {
   try {
-    const { userId, query } = req.body;
-    const user = (await getUser(userId)) as unknown as User;
+    const { query } = req.body;
+    const user = req.user;
     if (user) {
       const vehicles = await getAllVehicles(user, query);
       res.status(200).json(vehicles);
@@ -153,8 +153,8 @@ vehicleRoutes.get("/vehicles", async (req: Request, res: Response) => {
  */
 vehicleRoutes.get("/vehicles/count", async (req: Request, res: Response) => {
   try {
-    const { userId, status } = req.body;
-    const user = (await getUser(userId)) as unknown as User;
+    const { status } = req.body;
+    const user = req.user;
     if (user) {
       const count = await getVehiclesCount(status, user);
       res.status(200).json(count);
