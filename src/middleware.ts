@@ -7,13 +7,19 @@ const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"; // Replace with 
 
 // Paths that require authentication
 const protectedPaths = [
-  "/users",
+  "/user",
+  "/vehicles",
+  "/tag",
+  "/queues",
+  "/park-activities",
+  "/notifications",
+
 ];
 
 // Paths related to authentication (no session required)
 const authPaths = [
-  "api/auth/login",
-  "api/auth/register",
+  "/access-control",
+  "/auth",
   "/health",
   "/api/docs",
   "/",
