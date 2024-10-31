@@ -2,8 +2,6 @@ import { Router, Request, Response } from "express";
 import {
   changePassword,
   forgotPassword,
-  getUser,
-  getUsers,
   login,
   registerAdmin,
   resetPassword,

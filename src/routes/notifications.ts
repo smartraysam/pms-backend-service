@@ -47,7 +47,8 @@ notificationRoutes.post(
   "/notifications",
   async (req: Request, res: Response) => {
     try {
-      const { userId, props } = req.body;
+      const userId = req.user?.id;
+      const { props } = req.body;
       const notification = await createNotification(userId, props);
       res.status(200).json(notification);
     } catch (error: any) {
@@ -116,10 +117,10 @@ notificationRoutes.post(
  *         description: List of notifications for the user.
  */
 notificationRoutes.get(
-  "/notifications/user/:userId",
+  "/notifications/user",
   async (req: Request, res: Response) => {
     try {
-      const userId = parseInt(req.params.userId);
+      const userId = req.user.id;
       const notifications = await getNotifications(userId);
       res.status(200).json(notifications);
     } catch (error: any) {
@@ -244,10 +245,10 @@ notificationRoutes.delete(
  *         description: List of incoming notifications with unread count.
  */
 notificationRoutes.get(
-  "/notifications/incoming/:userId",
+  "/notifications/incoming",
   async (req: Request, res: Response) => {
     try {
-      const userId = parseInt(req.params.userId);
+      const userId = req.user.id;
       const incomingNotifications = await getIncomingNotifications(userId);
       res.status(200).json(incomingNotifications);
     } catch (error: any) {
@@ -273,10 +274,10 @@ notificationRoutes.get(
  *         description: All notifications marked as read.
  */
 notificationRoutes.put(
-  "/notifications/incoming/:userId/read-all",
+  "/notifications/incoming/read-all",
   async (req: Request, res: Response) => {
     try {
-      const userId = parseInt(req.params.userId);
+      const userId = req.user.id;
       await markAllIncomingNotificationsAsRead(userId);
       res.status(200).json({ message: "All notifications marked as read" });
     } catch (error: any) {
