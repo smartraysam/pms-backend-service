@@ -60,7 +60,18 @@ const vehicleRoutes = Router();
  */
 vehicleRoutes.post("/create-vehicle", async (req: Request, res: Response) => {
   try {
-    const vehicleData = {} as Vehicle;
+    const vehicleData = {
+      providerId: req.body.providerId,
+      vehicleNumber: req.body.vehicleNumber,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      fleetId: req.body.fleetId,
+      mobile: req.body.mobile,
+      walletBalance: req.body.walletBalance,
+      serviceTypeId: req.body.serviceTypeId,
+      serviceModel: req.body.serviceModel,
+      type: req.body.type,
+    } as Vehicle;
     const vehicle = await createVehicle(vehicleData);
     res.status(200).json(vehicle);
   } catch (error: any) {
