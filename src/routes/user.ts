@@ -9,7 +9,7 @@ import {
   resetPassword,
 } from "@/models/user.model";
 
-const router = Router();
+const userRoutes = Router();
 
 // Get all users
 /**
@@ -44,7 +44,7 @@ const router = Router();
  *                     type: string
  *                     example: "user"
  */
-router.get("/", async (req: Request, res: Response) => {
+userRoutes.get("/", async (req: Request, res: Response) => {
   const users = await getUsers();
   res.json(users);
 });
@@ -80,7 +80,7 @@ router.get("/", async (req: Request, res: Response) => {
  *       404:
  *         description: User not found
  */
-router.get("/user/:id", async (req: Request, res: Response) => {
+userRoutes.get("/user/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const user = await getUser(id);
@@ -156,7 +156,7 @@ router.get("/user/:id", async (req: Request, res: Response) => {
  *                   type: string
  *                   example: "Email must be unique"
  */
-router.post("auth/register", async (req: Request, res: Response) => {
+userRoutes.post("auth/register", async (req: Request, res: Response) => {
   const { name, email, phone_number, password, role, adminId } = req.body;
   try {
     if (!name || !email || !phone_number || !password || !role)
@@ -212,7 +212,7 @@ router.post("auth/register", async (req: Request, res: Response) => {
  *       401:
  *         description: Invalid email or password
  */
-router.post("/auth/login", async (req: Request, res: Response) => {
+userRoutes.post("/auth/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
@@ -251,7 +251,7 @@ router.post("/auth/login", async (req: Request, res: Response) => {
  *       400:
  *         description: Error occurred
  */
-router.post("/auth/forgot-password", async (req: Request, res: Response) => {
+userRoutes.post("/auth/forgot-password", async (req: Request, res: Response) => {
   const { email } = req.body;
 
   try {
@@ -287,7 +287,7 @@ router.post("/auth/forgot-password", async (req: Request, res: Response) => {
  *       400:
  *         description: Error occurred
  */
-router.post("/auth/reset-password", async (req: Request, res: Response) => {
+userRoutes.post("/auth/reset-password", async (req: Request, res: Response) => {
   const { token, password } = req.body;
 
   try {
@@ -331,7 +331,7 @@ router.post("/auth/reset-password", async (req: Request, res: Response) => {
  *       400:
  *         description: Error occurred
  */
-router.post(
+userRoutes.post(
   "/auth/change-password/:userId",
   async (req: Request, res: Response) => {
     const { userId } = req.params;
@@ -346,4 +346,4 @@ router.post(
   }
 );
 
-export default router;
+export default userRoutes;

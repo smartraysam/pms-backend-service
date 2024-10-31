@@ -64,8 +64,6 @@ export const createVehicle = async (vehicleData: Vehicle) => {
       },
     });
 
-    // console.log({ vehicleExists: !!vehicle, id: vehicleData.providerId });
-
     const { id, fleetId, ...dataWithoutId } = vehicleData;
 
     if (vehicle) {
