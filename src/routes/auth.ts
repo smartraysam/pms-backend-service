@@ -71,7 +71,7 @@ const authRoutes = Router();
  *                   type: string
  *                   example: "Email must be unique"
  */
-authRoutes.post("auth/register", async (req: Request, res: Response) => {
+authRoutes.post("/auth/register", async (req: Request, res: Response) => {
   const { name, email, phone_number, password, role, adminId } = req.body;
   try {
     if (!name || !email || !phone_number || !password || !role)
@@ -86,8 +86,10 @@ authRoutes.post("auth/register", async (req: Request, res: Response) => {
       adminId,
     });
 
+    console.log(user);
     res.status(201).json(user);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: "Email must be unique" });
   }
 });

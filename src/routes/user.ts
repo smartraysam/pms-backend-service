@@ -4,11 +4,23 @@ const userRoutes = Router();
 
 /**
  * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
+/**
+ * @swagger
  * /api/user:
  *   get:
  *     summary: Get user details
  *     description: Retrieves a user data.
  *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -53,6 +65,8 @@ userRoutes.get("/user", async (req: Request, res: Response) => {
  *     summary: Delete user account
  *     description: Deletes a user account based on the provided ID.
  *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -71,7 +85,7 @@ userRoutes.delete("/user", async (req: Request, res: Response) => {
   try {
     await deleteAccount(Number(id));
     res.status(200).json({ message: "User deleted successfully" });
-  } catch (error:any) {
+  } catch (error: any) {
     res.status(404).json({ error: error.message });
   }
 });
@@ -83,6 +97,8 @@ userRoutes.delete("/user", async (req: Request, res: Response) => {
  *     summary: Update user data
  *     description: Updates user information based on provided ID and data.
  *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -125,7 +141,7 @@ userRoutes.delete("/user", async (req: Request, res: Response) => {
  *         description: Bad request, validation errors
  */
 userRoutes.put("/user", async (req: Request, res: Response) => {
-  const { id } = req.user;
+  const id = req.user?.id;
   const data = req.body;
   try {
     const updatedUser = await updateUserData(Number(id), data);
@@ -134,4 +150,5 @@ userRoutes.put("/user", async (req: Request, res: Response) => {
     res.status(400).json({ error: error.message });
   }
 });
+
 export default userRoutes;

@@ -21,7 +21,8 @@ const accessRoutes = Router();
  * /access-control:
  *   post:
  *     summary: Handles access control with device and tag validation, endpoint is to be call in access control device.
- *     tags:[Access Control]
+ *     description: Deletes a user account based on the provided ID.
+ *     tags: [AccessControl]
  *     requestBody:
  *       required: true
  *       content:

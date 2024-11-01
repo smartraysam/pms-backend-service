@@ -1,5 +1,4 @@
 import bcrypt from "bcrypt";
-import prisma from "../lib/prisma";
 import jwt from "jsonwebtoken";
 import {
   ChangePasswordProps,
@@ -8,9 +7,10 @@ import {
   Role,
 } from "../lib/types";
 import crypto from "crypto";
-import { Prisma, TokenTypes } from "@prisma/client";
+import { Prisma, PrismaClient, TokenTypes } from "@prisma/client";
 import { NewAdminData } from "@/lib/types/post.types";
 import { ROLES } from "@/lib/constants/auth.const";
+import prisma from "@/lib/prisma";
 
 export const registerAdmin = async (data: NewAdminData) => {
   const passwordSaltFactor = await bcrypt.genSalt(12);
@@ -30,20 +30,22 @@ export const registerAdmin = async (data: NewAdminData) => {
     );
 
   data.password = hashedPassword;
-  if (data.role === ROLES.SUPER_MANAGER) {
+  if (data.role === "admin") {
     data.role = { connect: { name: ROLES.SUPER_MANAGER } };
-  } else if (data.role === ROLES.OPERATIONAL_MANAGER) {
+    delete data.adminId;
+  } else if (data.role === "manager") {
     data.role = { connect: { name: ROLES.OPERATIONAL_MANAGER } };
     data.managerId = data.adminId ? parseInt(data.adminId) : undefined;
-  } else if (data.role === ROLES.LOCATION_MANAGER) {
+  } else if (data.role === "operator") {
     data.role = { connect: { name: ROLES.LOCATION_MANAGER } };
     data.managerId = data.adminId ? parseInt(data.adminId) : undefined;
   }
-  return await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       ...data,
     },
   });
+  return user;
 };
 
 export const getUsers = async () => {

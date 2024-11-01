@@ -10,13 +10,13 @@ import tagRoutes from "@/routes/tags";
 import queueRoutes from "./routes/queue";
 import parkActivityRoutes from "./routes/park-activites";
 import authRoutes from "./routes/auth";
-
+import bodyParser from "body-parser";
 const app = express();
 const prisma = new PrismaClient();
 
 // Middleware to parse JSON requests
 app.use(express.json());
-
+app.use(bodyParser.json());
 // Request Logger Middleware
 app.use(requestLogger);
 
@@ -28,11 +28,11 @@ app.get("/health", (req: Request, res: Response) => {
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api", authRoutes);
 app.use("/api", userRoutes);
-app.use("/api", accessRoutes);
 app.use("/api", vehicleRoutes);
 app.use("/api", tagRoutes);
 app.use("/api", queueRoutes);
 app.use("/api", parkActivityRoutes);
+app.use("/api", accessRoutes);
 
 // Gracefully handle Prisma shutdown on server stop
 process.on("SIGINT", async () => {

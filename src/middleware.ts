@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import "../types/express"; // Import the extended Request interface
 import jwt from "jsonwebtoken";
-import { User } from "./lib/types";
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"; // Replace with env variable in production
 
 
