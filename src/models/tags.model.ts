@@ -1,7 +1,19 @@
 import prisma from "@/lib/prisma";
 import { GetTagsProps } from "@/lib/types";
-import { Prisma, TagStatus } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
+
+export const createTags = async (tagId: string) => {
+
+  let tag = await prisma.tag.findFirst({
+    where: { tagId: tagId },
+  });
+  if (tag) {
+  } else {
+    tag = await prisma.tag.create({ data: { tagId } });
+  }
+  return tag;
+};
 export const getTags = async (query?: GetTagsProps) => {
   const _query: Prisma.TagWhereInput = {};
 

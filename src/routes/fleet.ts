@@ -40,13 +40,13 @@ const  fleetRoutes = Router();
  *               company:
  *                 type: string
  *               fleetId:
- *                 type: string
+ *                 type: number 
  *               mobile:
  *                 type: string
  *               walletBalance:
  *                 type: number
  *               status:
- *                 type: string
+ *                 type: number
  *     responses:
  *       200:
  *         description: Fleet created or updated successfully

@@ -76,7 +76,11 @@ vehicleRoutes.post("/vehicles/create", async (req: Request, res: Response) => {
       vehicleNumber: req.body.vehicleNumber,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
-      fleetId: req.body.fleetId
+      fleetId: req.body.fleetId,
+      mobile:req.body.mobile,
+      serviceTypeId: 1,
+      serviceModel: "Standard",
+      status: "active"
     } as Vehicle;
     const vehicle = await createVehicle(vehicleData);
     res.status(200).json(vehicle);

@@ -6,7 +6,7 @@ import { getUser } from "./user.model";
 
 export const createFleet = async (fleetData: Prisma.FleetCreateInput) => {
   try {
-    const fleet = await prisma.fleet.findFirst({
+    let fleet = await prisma.fleet.findFirst({
       where: {
         name: fleetData.name,
         email: fleetData.email,
@@ -22,9 +22,9 @@ export const createFleet = async (fleetData: Prisma.FleetCreateInput) => {
         data: fleetData,
 
       });
-      return;
+      return fleet;
     } else {
-      await prisma.fleet.create({
+     fleet = await prisma.fleet.create({
         data: {
           name: fleetData.name,
           email: fleetData.email,

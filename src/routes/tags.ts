@@ -1,4 +1,4 @@
-import { deleteOldUnlinkedTags, getTags } from "@/models/tags.model";
+import { createTags, deleteOldUnlinkedTags, getTags } from "@/models/tags.model";
 import { linkVehicleTag, unlinkVehicleTag } from "@/models/vehicle.model";
 import { Router, Request, Response } from "express";
 
@@ -12,6 +12,62 @@ const tagRoutes = Router();
  *       scheme: bearer
  *       bearerFormat: JWT
  */
+
+/**
+ * @swagger
+ * /tags:
+ *   post:
+ *     summary: Create or retrieve a tag by its ID
+ *     description: If a tag with the specified `tagId` exists, it retrieves it. Otherwise, it creates a new tag with that `tagId`.
+ *     tags: [Tags]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               tagId:
+ *                 type: string
+ *                 description: The ID of the tag to create or retrieve.
+ *                 example: "tagid123"
+ *     responses:
+ *       200:
+ *         description: Successfully created or retrieved the tag.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   description: The unique identifier of the tag.
+ *                 tagId:
+ *                   type: string
+ *                   description: The tag ID.
+ *       400:
+ *         description: Bad request if `tagId` is missing or invalid.
+ *       500:
+ *         description: Internal server error.
+ */
+tagRoutes.post('/tags', async (req: Request, res: Response) => {
+  const { tagId } = req.body;
+
+  if (!tagId) {
+     res.status(400).json({ message: "tagId is required" });
+  }
+
+  try {
+    const tag = await createTags(tagId);
+    res.status(200).json(tag);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred while creating or retrieving the tag" });
+  }
+});
+
 /**
  * @swagger
  *  /api/link-tag:

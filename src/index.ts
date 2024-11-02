@@ -11,6 +11,7 @@ import queueRoutes from "./routes/queue";
 import parkActivityRoutes from "./routes/park-activites";
 import authRoutes from "./routes/auth";
 import jwt from "jsonwebtoken";
+import fleetRoutes from "./routes/fleet";
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"; // Replace with env variable in production
 
 const app = express();
@@ -34,7 +35,7 @@ app.use("/api", tagRoutes);
 app.use("/api", queueRoutes);
 app.use("/api", parkActivityRoutes);
 app.use("/api", accessRoutes);
-
+app.use("/api", fleetRoutes);
 // Gracefully handle Prisma shutdown on server stop
 process.on("SIGINT", async () => {
   await prisma.$disconnect();
@@ -43,7 +44,7 @@ process.on("SIGINT", async () => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Swagger docs available at http://localhost:${PORT}/api/docs`);
