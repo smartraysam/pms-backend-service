@@ -55,7 +55,7 @@ const router = Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/", async (req, res) => {
+router.post("/fleets", async (req, res) => {
   try {
     const fleet = await createFleet(req.body);
     res.status(200).json(fleet);
@@ -80,7 +80,7 @@ router.post("/", async (req, res) => {
  *       500:
  *         description: Internal server error
  */
-router.get("/", async (req: Request, res: Response) => {
+router.get("/fleets", async (req: Request, res: Response) => {
   try {
     const user = getUser(req.user?.userId)  as unknown as User;
     if (!user) {
@@ -109,7 +109,7 @@ router.get("/", async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error
  */
-router.get("/count",  async (req: Request, res: Response) => {
+router.get("/fleets/count",  async (req: Request, res: Response) => {
   try {
     const user = getUser(req.user?.userId) as unknown as User;
     if (!user) {
@@ -166,7 +166,7 @@ router.get("/count",  async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error
  */
-router.put("/:id", async (req, res) => {
+router.put("/fleets/:id", async (req, res) => {
   try {
     const fleet = await updateFleet({ id: parseInt(req.params.id) }, req.body);
     res.status(200).json(fleet);
@@ -204,7 +204,7 @@ router.put("/:id", async (req, res) => {
  *       500:
  *         description: Internal server error
  */
-router.patch("/:id/priority", async (req, res) => {
+router.patch("/api/fleets/:id/priority", async (req, res) => {
   const { priority } = req.query;
   try {
     const fleet = await updateFleetPriority(
