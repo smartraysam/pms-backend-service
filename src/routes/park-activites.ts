@@ -1,6 +1,13 @@
-import { createParkActivity, getAllParkActivities, getParkActivitiesCount, getParkActivityById, getParkedVehiclesByMonth, getTotalRidePerYear, getVehiclesInParkCount } from "@/models/park-activities.model";
+import {
+  createParkActivity,
+  getAllParkActivities,
+  getParkActivitiesCount,
+  getParkActivityById,
+  getParkedVehiclesByMonth,
+  getTotalRidePerYear,
+  getVehiclesInParkCount,
+} from "@/models/park-activities.model";
 import { Router, Request, Response } from "express";
-
 
 const parkActivityRoutes = Router();
 
@@ -34,15 +41,18 @@ const parkActivityRoutes = Router();
  *       400:
  *         description: Error creating park activity.
  */
-parkActivityRoutes.post("/park-activities", async (req: Request, res: Response) => {
-  try {
-    const data = req.body;
-    const parkActivity = await createParkActivity(data);
-    res.status(200).json(parkActivity);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+parkActivityRoutes.post(
+  "/park-activities",
+  async (req: Request, res: Response) => {
+    try {
+      const data = req.body;
+      const parkActivity = await createParkActivity(data);
+      res.status(200).json(parkActivity);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -63,14 +73,17 @@ parkActivityRoutes.post("/park-activities", async (req: Request, res: Response) 
  *       400:
  *         description: Error fetching park activities.
  */
-parkActivityRoutes.get("/park-activities", async (req: Request, res: Response) => {
-  try {
-    const parkActivities = await getAllParkActivities();
-    res.status(200).json(parkActivities);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+parkActivityRoutes.get(
+  "/park-activities",
+  async (req: Request, res: Response) => {
+    try {
+      const parkActivities = await getAllParkActivities();
+      res.status(200).json(parkActivities);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -92,15 +105,18 @@ parkActivityRoutes.get("/park-activities", async (req: Request, res: Response) =
  *       404:
  *         description: Park activity not found.
  */
-parkActivityRoutes.get("/park-activities/:id", async (req: Request, res: Response) => {
-  try {
-    const id = parseInt(req.params.id);
-    const parkActivity = await getParkActivityById(id);
-    res.status(200).json(parkActivity);
-  } catch (error: any) {
-    res.status(404).json({ message: error.message });
+parkActivityRoutes.get(
+  "/park-activities/:id",
+  async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const parkActivity = await getParkActivityById(id);
+      res.status(200).json(parkActivity);
+    } catch (error: any) {
+      res.status(404).json({ message: error.message });
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -113,14 +129,17 @@ parkActivityRoutes.get("/park-activities/:id", async (req: Request, res: Respons
  *       200:
  *         description: Count of park activities.
  */
-parkActivityRoutes.get("/park-activities/count", async (req: Request, res: Response) => {
-  try {
-    const count = await getParkActivitiesCount();
-    res.status(200).json({ count });
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+parkActivityRoutes.get(
+  "/park-activities/count",
+  async (req: Request, res: Response) => {
+    try {
+      const count = await getParkActivitiesCount();
+      res.status(200).json({ count });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -140,15 +159,18 @@ parkActivityRoutes.get("/park-activities/count", async (req: Request, res: Respo
  *       200:
  *         description: List of parked vehicles per month.
  */
-parkActivityRoutes.get("/park-activities/parked-vehicles/:year", async (req: Request, res: Response) => {
-  try {
-    const year = parseInt(req.params.year);
-    const parkedVehicles = await getParkedVehiclesByMonth(year);
-    res.status(200).json(parkedVehicles);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+parkActivityRoutes.get(
+  "/park-activities/parked-vehicles/:year",
+  async (req: Request, res: Response) => {
+    try {
+      const year = parseInt(req.params.year);
+      const parkedVehicles = await getParkedVehiclesByMonth(year);
+      res.status(200).json(parkedVehicles);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -168,15 +190,18 @@ parkActivityRoutes.get("/park-activities/parked-vehicles/:year", async (req: Req
  *       200:
  *         description: Total rides for the year.
  */
-parkActivityRoutes.get("/park-activities/total-rides/:year", async (req: Request, res: Response) => {
-  try {
-    const year = req.params.year;
-    const totalRides = await getTotalRidePerYear(year);
-    res.status(200).json({ totalRides });
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+parkActivityRoutes.get(
+  "/park-activities/total-rides/:year",
+  async (req: Request, res: Response) => {
+    try {
+      const year = req.params.year;
+      const totalRides = await getTotalRidePerYear(year);
+      res.status(200).json({ totalRides });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -189,13 +214,16 @@ parkActivityRoutes.get("/park-activities/total-rides/:year", async (req: Request
  *       200:
  *         description: Count of vehicles in park.
  */
-parkActivityRoutes.get("/park-activities/vehicles-in-park", async (req: Request, res: Response) => {
-  try {
-    const count = await getVehiclesInParkCount();
-    res.status(200).json({ count });
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+parkActivityRoutes.get(
+  "/park-activities/vehicles-in-park",
+  async (req: Request, res: Response) => {
+    try {
+      const count = await getVehiclesInParkCount();
+      res.status(200).json({ count });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
   }
-});
+);
 
-export default  parkActivityRoutes;
+export default parkActivityRoutes;
