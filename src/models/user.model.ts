@@ -15,7 +15,7 @@ import prisma from "@/lib/prisma";
 export const registerAdmin = async (data: NewAdminData) => {
   const passwordSaltFactor = await bcrypt.genSalt(12);
   const hashedPassword = await bcrypt.hash(
-    data.phone_number,
+    data.password,
     passwordSaltFactor
   );
   const prevUser = await prisma.user.findFirst({
@@ -45,7 +45,27 @@ export const registerAdmin = async (data: NewAdminData) => {
       ...data,
     },
   });
-  return user;
+  const { password, ...userWithoutPassword } = user;
+  return userWithoutPassword;
+};
+
+export const login = async ({ email, password }: LoginProps) => {
+  const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
+  const user = await prisma.user.findUnique({
+    where: { email }
+  });
+  if (!user) return null;
+
+  const isValidPassword = await bcrypt.compare(password, user.password);
+  if (!isValidPassword) return null;
+
+const token = jwt.sign(
+  { userId: user.id, email: user.email },
+  JWT_SECRET,
+  { expiresIn: "1h" } // Token expiration time, e.g., 1 hour
+);
+const { password: userPassword, ...userWithoutPassword } = user;
+return { user: userWithoutPassword, token , expiresIn: 3600};
 };
 
 export const getUsers = async () => {
@@ -122,26 +142,7 @@ export const updateUserData = async (
   return user;
 };
 
-export const login = async ({ email, password }: LoginProps) => {
-  const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
-  const user = await prisma.user.findUnique({
-    where: { email },
-    include: { location: true },
-  });
 
-  if (!user) return null;
-
-  const isValidPassword = await bcrypt.compare(password, user.password);
-  if (!isValidPassword) return null;
-
-  const token = jwt.sign(
-    { userId: user.id, email: user.email },
-    JWT_SECRET,
-    { expiresIn: "1h" } // Token expiration time, e.g., 1 hour
-  );
-
-  return { user, token };
-};
 
 const upsertToken = async (upsertTokenDto: Prisma.TokenCreateInput) => {
   const token = await prisma.token.findFirst({
@@ -177,6 +178,7 @@ export const forgotPassword = async (email: string) => {
 
   /** SEND TO EMAIL */
   console.log(token);
+  return token;
 };
 
 export const resetPassword = async ({

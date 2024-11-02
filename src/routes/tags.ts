@@ -3,14 +3,24 @@ import { linkVehicleTag, unlinkVehicleTag } from "@/models/vehicle.model";
 import { Router, Request, Response } from "express";
 
 const tagRoutes = Router();
-
 /**
  * @swagger
- * /link-tag:
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+/**
+ * @swagger
+ *  /api/link-tag:
  *   post:
  *     summary: Link a tag to a vehicle
  *     description: Links a tag to a specific vehicle.
  *     tags: [Tags]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -41,11 +51,13 @@ tagRoutes.post("/tag/link-tag", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /unlink-tag:
+ * /api/unlink-tag:
  *   post:
  *     summary: Unlink a tag from a vehicle
  *     description: Unlinks a tag from a specific vehicle.
  *     tags: [Tags]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:

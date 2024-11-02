@@ -1,32 +1,33 @@
 import express, { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import userRoutes from "@/routes/user";
-import { requestLogger, errorHandler } from "./middleware"; // Import middleware
-import swaggerUi from 'swagger-ui-express';
-import swaggerSpec from './swagger';
+import { requestLogger, errorHandler, authenticate } from "./middleware"; // Import middleware
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./swagger";
 import accessRoutes from "@/routes/access-control";
 import vehicleRoutes from "@/routes/vehicle";
 import tagRoutes from "@/routes/tags";
 import queueRoutes from "./routes/queue";
 import parkActivityRoutes from "./routes/park-activites";
 import authRoutes from "./routes/auth";
-import bodyParser from "body-parser";
+import jwt from "jsonwebtoken";
+const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"; // Replace with env variable in production
+
 const app = express();
 const prisma = new PrismaClient();
 
 // Middleware to parse JSON requests
 app.use(express.json());
-app.use(bodyParser.json());
-// Request Logger Middleware
 app.use(requestLogger);
-
+app.use(errorHandler);
 // Health Check Route
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ message: "API is running" });
 });
-
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api", authRoutes);
+
+app.use(authenticate);
 app.use("/api", userRoutes);
 app.use("/api", vehicleRoutes);
 app.use("/api", tagRoutes);
@@ -40,9 +41,6 @@ process.on("SIGINT", async () => {
   console.log("Prisma disconnected");
   process.exit(0);
 });
-
-// Global Error Handler Middleware
-app.use(errorHandler); // Use error handler from middleware.ts
 
 // Start the server
 const PORT = process.env.PORT || 3000;

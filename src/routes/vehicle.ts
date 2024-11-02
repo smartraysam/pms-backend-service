@@ -1,6 +1,4 @@
 import { VehicleStatus } from "@/lib/enums";
-import { User } from "@/lib/types";
-import { getUser } from "@/models/user.model";
 import {
   createVehicle,
   getAllVehicles,
@@ -15,13 +13,26 @@ import { Router, Request, Response } from "express";
 
 const vehicleRoutes = Router();
 
+
 /**
  * @swagger
- * /create-vehicle:
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
+/**
+ * @swagger
+ * /api/vehicles/create:
  *   post:
  *     summary: Create or update a vehicle
  *     description: Creates a new vehicle or updates an existing vehicle based on the provided data.
  *     tags: [Vehicle]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -58,19 +69,14 @@ const vehicleRoutes = Router();
  *       400:
  *         description: Error creating or updating vehicle.
  */
-vehicleRoutes.post("/vehicles/create-vehicle", async (req: Request, res: Response) => {
+vehicleRoutes.post("/vehicles/create", async (req: Request, res: Response) => {
   try {
     const vehicleData = {
       providerId: req.body.providerId,
       vehicleNumber: req.body.vehicleNumber,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
-      fleetId: req.body.fleetId,
-      mobile: req.body.mobile,
-      walletBalance: req.body.walletBalance,
-      serviceTypeId: req.body.serviceTypeId,
-      serviceModel: req.body.serviceModel,
-      type: req.body.type,
+      fleetId: req.body.fleetId
     } as Vehicle;
     const vehicle = await createVehicle(vehicleData);
     res.status(200).json(vehicle);
@@ -81,11 +87,13 @@ vehicleRoutes.post("/vehicles/create-vehicle", async (req: Request, res: Respons
 
 /**
  * @swagger
- * /vehicles:
+ * /api/vehicles:
  *   get:
  *     summary: Retrieve all vehicles
  *     description: Retrieves a list of all vehicles, optionally filtered by search query and user role.
  *     tags: [Vehicle]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: search
@@ -130,7 +138,7 @@ vehicleRoutes.get("/vehicles", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /vehicles/count:
+ *  /api/vehicles/count:
  *   get:
  *     summary: Get count of vehicles by status
  *     description: Returns the total number of vehicles based on the specified status and user role.
@@ -168,7 +176,7 @@ vehicleRoutes.get("/vehicles/count", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /vehicles/status/{status}:
+ *  /api/vehicles/status/{status}:
  *   get:
  *     summary: Get vehicles by status
  *     description: Retrieves a list of vehicles that match the specified status.
@@ -216,7 +224,7 @@ vehicleRoutes.get(
 
 /**
  * @swagger
- * /vehicles/update:
+ * /api/vehicles/update:
  *   patch:
  *     summary: Update vehicle details
  *     description: Updates the status, type, or special duty of a vehicle.
@@ -257,7 +265,7 @@ vehicleRoutes.patch("/vehicles/update", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /vehicles/tag/{tagId}:
+ * /api/vehicles/tag/{tagId}:
  *   get:
  *     summary: Get vehicle by tag ID
  *     description: Retrieves a vehicle associated with a specified tag ID.

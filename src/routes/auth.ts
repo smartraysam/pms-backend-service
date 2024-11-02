@@ -86,7 +86,6 @@ authRoutes.post("/auth/register", async (req: Request, res: Response) => {
       adminId,
     });
 
-    console.log(user);
     res.status(201).json(user);
   } catch (error) {
     console.log(error);
@@ -172,8 +171,8 @@ authRoutes.post("/auth/forgot-password", async (req: Request, res: Response) => 
   const { email } = req.body;
 
   try {
-    await forgotPassword(email);
-    res.status(200).json({ message: "Password reset token sent to email" });
+   const token = await forgotPassword(email);
+    res.status(200).json({token, message: "Password reset token sent to email" });
   } catch (error: any) {
     res.status(400).json({ message: error.message });
   }
@@ -215,52 +214,5 @@ authRoutes.post("/auth/reset-password", async (req: Request, res: Response) => {
   }
 });
 
-/**
- * @swagger
- * /api/auth/change-password/{userId}:
- *   post:
- *     summary: Change password
- *     description: Changes the user's password.
- *     tags: [Auth]
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *         description: The ID of the user
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               currentPassword:
- *                 type: string
- *                 example: "oldpassword123"
- *               newPassword:
- *                 type: string
- *                 example: "newpassword123"
- *     responses:
- *       200:
- *         description: Password changed successfully
- *       400:
- *         description: Error occurred
- */
-authRoutes.post(
-  "/auth/change-password/:userId",
-  async (req: Request, res: Response) => {
-    const { userId } = req.params;
-    const { currentPassword, newPassword } = req.body;
-
-    try {
-      await changePassword(userId, { currentPassword, newPassword });
-      res.status(200).json({ message: "Password changed successfully" });
-    } catch (error: any) {
-      res.status(400).json({ message: error.message });
-    }
-  }
-);
 
 export default authRoutes;

@@ -17,11 +17,12 @@ export const createFleet = async (fleetData: Prisma.FleetCreateInput) => {
     // console.log({ fleetData });
 
     if (fleet) {
+      await prisma.fleet.update({
+        where: { id: fleet.id },
+        data: fleetData,
+
+      });
       return;
-      // await prisma.fleet.update({
-      //   where: { id: fleet.id },
-      //   data: fleetData,
-      // });
     } else {
       await prisma.fleet.create({
         data: {
@@ -29,7 +30,6 @@ export const createFleet = async (fleetData: Prisma.FleetCreateInput) => {
           email: fleetData.email,
           company: fleetData.company,
           fleetId: fleetData.fleetId,
-          baseLocationId: fleetData.baseLocationId,
           mobile: fleetData.mobile,
           walletBalance: fleetData.walletBalance,
           status: fleetData.status,
