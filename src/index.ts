@@ -12,6 +12,7 @@ import parkActivityRoutes from "./routes/park-activites";
 import authRoutes from "./routes/auth";
 import jwt from "jsonwebtoken";
 import fleetRoutes from "./routes/fleet";
+import locationRoutes from "./routes/location";
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"; // Replace with env variable in production
 
 const app = express();
@@ -36,6 +37,8 @@ app.use("/api", queueRoutes);
 app.use("/api", parkActivityRoutes);
 app.use("/api", accessRoutes);
 app.use("/api", fleetRoutes);
+
+app.use("/api", locationRoutes);
 // Gracefully handle Prisma shutdown on server stop
 process.on("SIGINT", async () => {
   await prisma.$disconnect();

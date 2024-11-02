@@ -1,8 +1,24 @@
-import { createNewLocation, deleteLocation, getLocationCount, getLocations, getUserLocation, updateLocation, updateUserLocation } from '@/models/location.model';
-import express, { Request, Response } from 'express';
+import {
+  createNewLocation,
+  deleteLocation,
+  getLocationCount,
+  getLocations,
+  getUserLocation,
+  updateLocation,
+  updateUserLocation,
+} from "@/models/location.model";
+import express, { Request, Response } from "express";
 
-
-const router = express.Router();
+const locationRoutes = express.Router();
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
 
 /**
  * @swagger
@@ -10,6 +26,8 @@ const router = express.Router();
  *   get:
  *     summary: Get the total count of locations
  *     tags: [Locations]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: The total count of locations
@@ -23,12 +41,12 @@ const router = express.Router();
  *       500:
  *         description: Internal server error.
  */
-router.get('/locations/count', async (req: Request, res: Response) => {
+locationRoutes.get("/locations/count", async (req: Request, res: Response) => {
   try {
     const count = await getLocationCount();
     res.status(200).json({ count });
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -38,6 +56,8 @@ router.get('/locations/count', async (req: Request, res: Response) => {
  *   get:
  *     summary: Retrieve all locations
  *     tags: [Locations]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of locations
@@ -66,12 +86,12 @@ router.get('/locations/count', async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error.
  */
-router.get('/locations', async (req: Request, res: Response) => {
+locationRoutes.get("/locations", async (req: Request, res: Response) => {
   try {
     const locations = await getLocations();
     res.status(200).json(locations);
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -81,6 +101,8 @@ router.get('/locations', async (req: Request, res: Response) => {
  *   post:
  *     summary: Create a new location
  *     tags: [Locations]
+ *    security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -95,10 +117,10 @@ router.get('/locations', async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error.
  */
-router.post('/locations', async (req: Request, res: Response) => {
+locationRoutes.post("/locations", async (req: Request, res: Response) => {
   try {
     await createNewLocation(req.body);
-    res.status(201).json({ message: 'Location created successfully' });
+    res.status(201).json({ message: "Location created successfully" });
   } catch (error: any) {
     res.status(400).json({ message: error.message });
   }
@@ -110,6 +132,8 @@ router.post('/locations', async (req: Request, res: Response) => {
  *   put:
  *     summary: Update a location
  *     tags: [Locations]
+ *    security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -131,11 +155,11 @@ router.post('/locations', async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error.
  */
-router.put('/locations/:id', async (req: Request, res: Response) => {
+locationRoutes.put("/locations/:id", async (req: Request, res: Response) => {
   const locationId = parseInt(req.params.id, 10);
   try {
     await updateLocation(req.body, locationId);
-    res.status(200).json({ message: 'Location updated successfully' });
+    res.status(200).json({ message: "Location updated successfully" });
   } catch (error: any) {
     res.status(404).json({ message: error.message });
   }
@@ -147,6 +171,8 @@ router.put('/locations/:id', async (req: Request, res: Response) => {
  *   delete:
  *     summary: Delete a location
  *     tags: [Locations]
+ *    security:
+ *     - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -162,12 +188,12 @@ router.put('/locations/:id', async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error.
  */
-router.delete('/locations/:id', async (req: Request, res: Response) => {
+locationRoutes.delete("/locations/:id", async (req: Request, res: Response) => {
   const locationId = parseInt(req.params.id, 10);
   try {
     await deleteLocation(locationId);
-    res.status(200).json({ message: 'Location deleted successfully' });
-  } catch (error:any) {
+    res.status(200).json({ message: "Location deleted successfully" });
+  } catch (error: any) {
     res.status(404).json({ message: error.message });
   }
 });
@@ -178,6 +204,8 @@ router.delete('/locations/:id', async (req: Request, res: Response) => {
  *   get:
  *     summary: Get the location associated with a specific user
  *     tags: [Locations]
+ *   security:
+ *    - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: userId
@@ -193,15 +221,18 @@ router.delete('/locations/:id', async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error.
  */
-router.get('/locations/user/:userId', async (req: Request, res: Response) => {
-  const userId = req.params.userId;
-  try {
-    const location = await getUserLocation(userId);
-    res.status(200).json(location);
-  } catch (error) {
-    res.status(404).json({ message: 'Location not found' });
+locationRoutes.get(
+  "/locations/user/:userId",
+  async (req: Request, res: Response) => {
+    const userId = req.params.userId;
+    try {
+      const location = await getUserLocation(userId);
+      res.status(200).json(location);
+    } catch (error) {
+      res.status(404).json({ message: "Location not found" });
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -209,6 +240,8 @@ router.get('/locations/user/:userId', async (req: Request, res: Response) => {
  *   patch:
  *     summary: Update a user’s location details
  *     tags: [Locations]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: userId
@@ -230,14 +263,17 @@ router.get('/locations/user/:userId', async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error.
  */
-router.patch('/locations/user/:userId', async (req: Request, res: Response) => {
-  const userId = req.params.userId;
-  try {
-    await updateUserLocation(userId, req.body);
-    res.status(200).json({ message: 'Location updated successfully' });
-  } catch (error: any) {
-    res.status(404).json({ message: error.message });
+locationRoutes.patch(
+  "/locations/user/:userId",
+  async (req: Request, res: Response) => {
+    const userId = req.params.userId;
+    try {
+      await updateUserLocation(userId, req.body);
+      res.status(200).json({ message: "Location updated successfully" });
+    } catch (error: any) {
+      res.status(404).json({ message: error.message });
+    }
   }
-});
+);
 
-export default router;
+export default locationRoutes;
