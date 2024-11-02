@@ -3,10 +3,7 @@ import { AuditLog } from ".";
 export type RegisterLocation = {
   locationName: string;
   locationAddress: string;
-  managerEmail: string;
-  managerName: string;
-  phoneNumber: string;
-  // password: string; // This is not needed
+  userId: number;
 };
 
 export type NewAdminData = {
@@ -28,7 +25,6 @@ export type NewStaff = {
   // baseLocationId: number;
   // status: "Active" | "Inactive";
 };
-
 
 export type UpsertParkRuleProps = {
   minWalletBalance?: number;

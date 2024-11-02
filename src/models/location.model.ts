@@ -1,7 +1,5 @@
 import prisma from "@/lib/prisma";
 import { RegisterLocation } from "@/lib/types/post.types";
-import { ROLES } from "@/lib/constants/auth.const";
-import bcrypt from "bcrypt";
 import { UpdateLocationProps } from "@/lib/types";
 import { Prisma } from "@prisma/client";
 import * as fs from "fs/promises";
@@ -22,34 +20,12 @@ export const createNewLocation = async (data: RegisterLocation) => {
   const {
     locationAddress,
     locationName,
-    managerEmail,
-    managerName,
-    phoneNumber,
+    userId
   } = data;
 
-  // create location manager
-
-  const role = await prisma.role.findFirst({
-    where: { name: ROLES.LOCATION_MANAGER },
-  });
-
-  if (!role) throw new Error("Role not found");
-
-  const passwordSalt = await bcrypt.genSalt(12);
-  const hashedPassword = await bcrypt.hash(phoneNumber, passwordSalt);
-
-  const user = await prisma.user.create({
-    data: {
-      email: managerEmail,
-      name: managerName,
-      password: hashedPassword,
-      phone_number: phoneNumber,
-      roleId: role.id,
-    },
-  });
 
   const locationExists = await prisma.location.findFirst({
-    where: { address: locationAddress, adminId: user.id, name: locationName },
+    where: { address: locationAddress, adminId: userId, name: locationName },
   });
 
   if (locationExists) throw new Error("Location already exists");
@@ -59,7 +35,7 @@ export const createNewLocation = async (data: RegisterLocation) => {
     data: {
       address: locationAddress,
       name: locationName,
-      adminId: user.id,
+      adminId: userId,
     },
   });
 };
@@ -75,16 +51,8 @@ export const updateLocation = async (
   const {
     locationAddress,
     locationName,
-    managerEmail,
-    managerName,
-    phoneNumber,
   } = data;
 
-  const userUpdate = {
-    email: managerEmail,
-    name: managerName,
-    phone_number: phoneNumber,
-  };
 
   const locationUpdate = {
     name: locationName,
@@ -102,35 +70,10 @@ export const updateLocation = async (
   if (locationExists)
     throw new Error("Another location with this name already exists");
 
-  const userExists = await prisma.user.findFirst({
-    where: {
-      OR: [
-        {
-          phone_number: phoneNumber,
-        },
-        {
-          email: managerEmail,
-        },
-      ],
-      NOT: {
-        id: location.adminId,
-      },
-    },
-  });
-
-  if (userExists)
-    throw new Error(
-      "Oops! another user with this email/phone number already exists",
-    );
 
   await prisma.location.update({
     where: { id: locationId },
     data: locationUpdate,
-  });
-
-  await prisma.user.update({
-    where: { id: location.adminId },
-    data: userUpdate,
   });
 };
 
