@@ -9,7 +9,7 @@ import {
 import { getUser } from "@/models/user.model";
 import { User } from "@/lib/types";
 
-const router = Router();
+const  fleetRoutes = Router();
 
 /**
  * @swagger
@@ -55,7 +55,7 @@ const router = Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/fleets", async (req, res) => {
+fleetRoutes.post("/fleets", async (req, res) => {
   try {
     const fleet = await createFleet(req.body);
     res.status(200).json(fleet);
@@ -80,7 +80,7 @@ router.post("/fleets", async (req, res) => {
  *       500:
  *         description: Internal server error
  */
-router.get("/fleets", async (req: Request, res: Response) => {
+fleetRoutes.get("/fleets", async (req: Request, res: Response) => {
   try {
     const user = getUser(req.user?.userId)  as unknown as User;
     if (!user) {
@@ -109,7 +109,7 @@ router.get("/fleets", async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error
  */
-router.get("/fleets/count",  async (req: Request, res: Response) => {
+fleetRoutes.get("/fleets/count",  async (req: Request, res: Response) => {
   try {
     const user = getUser(req.user?.userId) as unknown as User;
     if (!user) {
@@ -166,7 +166,7 @@ router.get("/fleets/count",  async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error
  */
-router.put("/fleets/:id", async (req, res) => {
+fleetRoutes.put("/fleets/:id", async (req, res) => {
   try {
     const fleet = await updateFleet({ id: parseInt(req.params.id) }, req.body);
     res.status(200).json(fleet);
@@ -204,7 +204,7 @@ router.put("/fleets/:id", async (req, res) => {
  *       500:
  *         description: Internal server error
  */
-router.patch("/api/fleets/:id/priority", async (req, res) => {
+fleetRoutes.patch("/fleets/:id/priority", async (req, res) => {
   const { priority } = req.query;
   try {
     const fleet = await updateFleetPriority(
@@ -217,4 +217,4 @@ router.patch("/api/fleets/:id/priority", async (req, res) => {
   }
 });
 
-export default router;
+export default fleetRoutes;
