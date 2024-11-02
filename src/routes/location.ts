@@ -206,13 +206,6 @@ locationRoutes.delete("/locations/:id", async (req: Request, res: Response) => {
  *     tags: [Locations]
  *   security:
  *    - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *         description: The user ID
  *     responses:
  *       200:
  *         description: User's location.
@@ -222,9 +215,9 @@ locationRoutes.delete("/locations/:id", async (req: Request, res: Response) => {
  *         description: Internal server error.
  */
 locationRoutes.get(
-  "/locations/user/:userId",
+  "/locations/user",
   async (req: Request, res: Response) => {
-    const userId = req.params.userId;
+    const userId = req.user.userId;
     try {
       const location = await getUserLocation(userId);
       res.status(200).json(location);
@@ -264,9 +257,9 @@ locationRoutes.get(
  *         description: Internal server error.
  */
 locationRoutes.patch(
-  "/locations/user/:userId",
+  "/locations/user",
   async (req: Request, res: Response) => {
-    const userId = req.params.userId;
+    const userId = req.user.userId;
     try {
       await updateUserLocation(userId, req.body);
       res.status(200).json({ message: "Location updated successfully" });
