@@ -4,12 +4,12 @@ import {
   getLocationCount,
   getLocations,
   getUserLocation,
-  updateLocation,
   updateUserLocation,
 } from "@/models/location.model";
-import express, { Request, Response } from "express";
+import { Request, Response, Router } from "express";
 
-const locationRoutes = express.Router();
+const locationRoutes = Router();
+
 /**
  * @swagger
  * components:
@@ -22,7 +22,7 @@ const locationRoutes = express.Router();
 
 /**
  * @swagger
- * /locations/count:
+ * /api/locations/count:
  *   get:
  *     summary: Get the total count of locations
  *     tags: [Locations]
@@ -49,10 +49,9 @@ locationRoutes.get("/locations/count", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
 /**
  * @swagger
- * /locations:
+ * /api/locations:
  *   get:
  *     summary: Retrieve all locations
  *     tags: [Locations]
@@ -74,15 +73,10 @@ locationRoutes.get("/locations/count", async (req: Request, res: Response) => {
  *                     type: string
  *                   name:
  *                     type: string
- *                   admin:
+ *                   adminId:
  *                     type: object
- *                     properties:
- *                       id:
- *                         type: integer
- *                       name:
- *                         type: string
- *                       email:
- *                         type: string
+ *                   email:
+ *                     type: string
  *       500:
  *         description: Internal server error.
  */
@@ -94,26 +88,108 @@ locationRoutes.get("/locations", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
 /**
  * @swagger
- * /locations:
- *   post:
- *     summary: Create a new location
+ * /api/locations/user:
+ *   patch:
+ *     summary: Update a user’s location details
  *     tags: [Locations]
- *    security:
- *       - bearerAuth: []
+ *     security:
+ *      - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/RegisterLocation'
+ *            type: object
+ *           properties:
+ *            address:
+ *             type: string
+ *            name:
+ *             type: string
+ *            adminId:
+ *             type: integer
+ *            logo:
+ *              type: string
  *     responses:
- *       201:
- *         description: Location created successfully.
- *       400:
- *         description: Role not found or location already exists.
+ *       200:
+ *         description: Location updated successfully.
+ *       404:
+ *         description: Location not found.
+ *       500:
+ *         description: Internal server error.
+ */
+locationRoutes.patch("/locations/user", async (req: Request, res: Response) => {
+  const userId = req.user.userId;
+  try {
+    await updateUserLocation(userId, req.body);
+    res.status(200).json({ message: "Location updated successfully" });
+  } catch (error: any) {
+    res.status(404).json({ message: error.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/locations/delete/{id}:
+ *   delete:
+ *     summary: Delete a location
+ *     tags: [Locations]
+ *     security:
+ *      - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Location deleted successfully.
+ *       404:
+ *         description: Location not found.
+ *       500:
+ *         description: Internal server error.
+ */
+locationRoutes.delete("/locations/delete/:id", async (req: Request, res: Response) => {
+  const locationId = parseInt(req.params.id);
+  try {
+    await deleteLocation(locationId);
+    res.status(200).json({ message: "Location deleted successfully" });
+  } catch (error: any) {
+    res.status(404).json({ message: error.message });
+  }
+});
+
+
+/**
+ * @swagger
+ * /api/locations:
+ *   post:
+ *     summary: Create new location
+ *     tags: [Locations]
+ *     security:
+ *      - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *            type: object
+ *           properties:
+ *            address:
+ *             type: string
+ *            name:
+ *             type: string
+ *            adminId:
+ *             type: integer
+ *            logo:
+ *              type: string
+ *     responses:
+ *       200:
+ *         description: Location updated successfully.
+ *       404:
+ *         description: Location not found.
  *       500:
  *         description: Internal server error.
  */
@@ -126,86 +202,15 @@ locationRoutes.post("/locations", async (req: Request, res: Response) => {
   }
 });
 
-/**
- * @swagger
- * /locations/{id}:
- *   put:
- *     summary: Update a location
- *     tags: [Locations]
- *    security:
- *      - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: The location ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/RegisterLocation'
- *     responses:
- *       200:
- *         description: Location updated successfully.
- *       404:
- *         description: Location not found or validation error.
- *       500:
- *         description: Internal server error.
- */
-locationRoutes.put("/locations/:id", async (req: Request, res: Response) => {
-  const locationId = parseInt(req.params.id, 10);
-  try {
-    await updateLocation(req.body, locationId);
-    res.status(200).json({ message: "Location updated successfully" });
-  } catch (error: any) {
-    res.status(404).json({ message: error.message });
-  }
-});
 
 /**
  * @swagger
- * /locations/{id}:
- *   delete:
- *     summary: Delete a location
- *     tags: [Locations]
- *    security:
- *     - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: The location ID
- *     responses:
- *       200:
- *         description: Location deleted successfully.
- *       404:
- *         description: Location not found.
- *       500:
- *         description: Internal server error.
- */
-locationRoutes.delete("/locations/:id", async (req: Request, res: Response) => {
-  const locationId = parseInt(req.params.id, 10);
-  try {
-    await deleteLocation(locationId);
-    res.status(200).json({ message: "Location deleted successfully" });
-  } catch (error: any) {
-    res.status(404).json({ message: error.message });
-  }
-});
-
-/**
- * @swagger
- * /locations/user/{userId}:
+ * /api/locations/user:
  *   get:
  *     summary: Get the location associated with a specific user
  *     tags: [Locations]
- *   security:
- *    - bearerAuth: []
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: User's location.
@@ -214,59 +219,15 @@ locationRoutes.delete("/locations/:id", async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error.
  */
-locationRoutes.get(
-  "/locations/user",
-  async (req: Request, res: Response) => {
-    const userId = req.user.userId;
-    try {
-      const location = await getUserLocation(userId);
-      res.status(200).json(location);
-    } catch (error) {
-      res.status(404).json({ message: "Location not found" });
-    }
+locationRoutes.get("/locations/user", async (req: Request, res: Response) => {
+  const userId = req.user.userId;
+  try {
+    const location = await getUserLocation(userId);
+    res.status(200).json(location);
+  } catch (error) {
+    res.status(404).json({ message: "Location not found" });
   }
-);
+});
 
-/**
- * @swagger
- * /locations/user/{userId}:
- *   patch:
- *     summary: Update a user’s location details
- *     tags: [Locations]
- *     security:
- *      - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *         description: The user ID
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             $ref: '#/components/schemas/UpdateLocationProps'
- *     responses:
- *       200:
- *         description: Location updated successfully.
- *       404:
- *         description: Location not found.
- *       500:
- *         description: Internal server error.
- */
-locationRoutes.patch(
-  "/locations/user",
-  async (req: Request, res: Response) => {
-    const userId = req.user.userId;
-    try {
-      await updateUserLocation(userId, req.body);
-      res.status(200).json({ message: "Location updated successfully" });
-    } catch (error: any) {
-      res.status(404).json({ message: error.message });
-    }
-  }
-);
 
 export default locationRoutes;
