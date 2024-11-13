@@ -112,7 +112,7 @@ fleetRoutes.get("/fleets", async (req: Request, res: Response) => {
  */
 fleetRoutes.get("/fleets/count",  async (req: Request, res: Response) => {
   try {
-    const user = getUser(req.user?.userId) as unknown as User;
+    const user = await getUser(req.user?.userId) as unknown as User;
     if (!user) {
       res.status(404).json({ message: "User not found" });
     }

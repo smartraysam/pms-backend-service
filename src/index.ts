@@ -12,6 +12,7 @@ import parkActivityRoutes from "./routes/park-activites";
 import authRoutes from "./routes/auth";
 import fleetRoutes from "./routes/fleet";
 import locationRoutes from "./routes/location";
+import deviceRoutes from "./routes/device";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -35,7 +36,7 @@ app.use("/api", queueRoutes);
 app.use("/api", parkActivityRoutes);
 app.use("/api", accessRoutes);
 app.use("/api", fleetRoutes);
-
+app.use("/api", deviceRoutes);
 app.use("/api", locationRoutes);
 // Gracefully handle Prisma shutdown on server stop
 process.on("SIGINT", async () => {

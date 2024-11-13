@@ -10,6 +10,7 @@ const protectedPaths = [
   "/queues",
   "/park-activities",
   "/notifications",
+  "/devices",
 ];
 
 // Request Logger Middleware

@@ -55,8 +55,8 @@ const locationRoutes = Router();
 locationRoutes.post("/locations", async (req: Request, res: Response) => {
   try {
     req.body.adminId = req.user.userId;
-    await createNewLocation(req.body);
-    res.status(201).json({ message: "Location created successfully" });
+   const location = await createNewLocation(req.body);
+    res.status(201).json({location, message: "Location created successfully" });
   } catch (error: any) {
     res.status(400).json({ message: error.message });
   }

@@ -1,4 +1,6 @@
 import { VehicleStatus } from "@/lib/enums";
+import { User } from "@/lib/types";
+import { getUser } from "@/models/user.model";
 import {
   createVehicle,
   getAllVehicles,
@@ -124,7 +126,10 @@ vehicleRoutes.post("/vehicles/create", async (req: Request, res: Response) => {
 vehicleRoutes.get("/vehicles", async (req: Request, res: Response) => {
   try {
     const { query } = req.body;
-    const user = req.user;
+    const user = await getUser(req.user?.userId) as unknown as User;
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+    }
     if (user) {
       const vehicles = await getAllVehicles(user, query);
       res.status(200).json(vehicles);

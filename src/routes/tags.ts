@@ -15,7 +15,7 @@ const tagRoutes = Router();
 
 /**
  * @swagger
- * /api/tags:
+ * /api/tag:
  *   post:
  *     summary: Create or retrieve a tag by its ID
  *     description: If a tag with the specified `tagId` exists, it retrieves it. Otherwise, it creates a new tag with that `tagId`.
@@ -52,7 +52,7 @@ const tagRoutes = Router();
  *       500:
  *         description: Internal server error.
  */
-tagRoutes.post('/tags', async (req: Request, res: Response) => {
+tagRoutes.post('/tag', async (req: Request, res: Response) => {
   const { tagId } = req.body;
 
   if (!tagId) {
@@ -70,7 +70,7 @@ tagRoutes.post('/tags', async (req: Request, res: Response) => {
 
 /**
  * @swagger
- *  /api/link-tag:
+ *  /api/tag/link-tag:
  *   post:
  *     summary: Link a tag to a vehicle
  *     description: Links a tag to a specific vehicle.
@@ -107,7 +107,7 @@ tagRoutes.post("/tag/link-tag", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/unlink-tag:
+ * /api/tag/unlink-tag:
  *   post:
  *     summary: Unlink a tag from a vehicle
  *     description: Unlinks a tag from a specific vehicle.
@@ -144,7 +144,7 @@ tagRoutes.post("/tag/unlink-tag", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/get-tag:
+ * /api/tag/get-tag:
  *   get:
  *     summary: Retrieve tags
  *     description: Retrieves tags based on optional status filter.
@@ -174,7 +174,7 @@ tagRoutes.get("/tag/get-tag", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/delete-tag:
+ * /api/tag/delete-tag:
  *   post:
  *     summary: Delete old unlinked tags
  *     description: Deletes all unlinked tags except the latest two.

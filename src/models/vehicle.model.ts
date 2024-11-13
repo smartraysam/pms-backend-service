@@ -102,6 +102,7 @@ export const getAllVehicles = async (
   const _query: Prisma.VehicleWhereInput = {};
   if (!user) return [];
 
+  console.log({ user });  
   const search = query.search ?? "";
 
   if (search) {

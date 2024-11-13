@@ -1,4 +1,14 @@
-import { createQueue, deleteQueue, getAllQueues, getCountByLocation, getQueueById, getQueueOverview, getQueuesByLocation, updateQueue } from "@/models/queue.model";
+import {
+  createQueue,
+  deleteQueue,
+  getAllQueues,
+  getCountByLocation,
+  getQueueById,
+  getQueueOverview,
+  getQueuesByLocation,
+  processQueueAction,
+  updateQueue,
+} from "@/models/queue.model";
 import { QueueLocation } from "@prisma/client";
 import { Router, Request, Response } from "express";
 
@@ -6,7 +16,35 @@ const queueRoutes = Router();
 
 /**
  * @swagger
- * /queues:
+ * /api/queues/process:
+ *   get:
+ *     summary: Process queues
+ *     description: Processes queues to ensure they are in the correct order and ensure queue are move to next location.
+ *     tags: [Queue]
+ *     responses:
+ *       200:
+ *         description: Queues processed successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       400:
+ *         description: Error processing queues.
+ */
+queueRoutes.get("/queues/process", async (req: Request, res: Response) => {
+  try {
+    const queues = await processQueueAction();
+    res.status(200).json(queues);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/queues:
  *   get:
  *     summary: Get all queues
  *     description: Returns a list of all queue entries.
@@ -36,7 +74,7 @@ queueRoutes.get("/queues", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /queues/{vehicleId}:
+ * /api/queues/{vehicleId}:
  *   get:
  *     summary: Get a queue by vehicle ID
  *     description: Fetches a queue entry for a specified vehicle ID.
@@ -72,7 +110,7 @@ queueRoutes.get("/queues/:vehicleId", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /queues:
+ * /api/queues:
  *   post:
  *     summary: Create a new queue entry
  *     description: Adds a new queue entry with specified data.
@@ -129,7 +167,7 @@ queueRoutes.post("/queues", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /queues/{vehicleId}:
+ * /api/queues/{vehicleId}:
  *   patch:
  *     summary: Update a queue entry
  *     description: Updates a queue entry based on vehicle ID with specified data.
@@ -192,7 +230,7 @@ queueRoutes.patch("/queues/:vehicleId", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /queues/{vehicleId}:
+ * /api/queues/{vehicleId}:
  *   delete:
  *     summary: Delete a queue entry by vehicle ID
  *     description: Deletes a queue entry for the specified vehicle ID.
@@ -216,19 +254,22 @@ queueRoutes.patch("/queues/:vehicleId", async (req: Request, res: Response) => {
  *       400:
  *         description: Error deleting queue entry.
  */
-queueRoutes.delete("/queues/:vehicleId", async (req: Request, res: Response) => {
-  try {
-    const vehicleId = Number(req.params.vehicleId);
-    const deletedQueue = await deleteQueue(vehicleId);
-    res.status(200).json(deletedQueue);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+queueRoutes.delete(
+  "/queues/:vehicleId",
+  async (req: Request, res: Response) => {
+    try {
+      const vehicleId = Number(req.params.vehicleId);
+      const deletedQueue = await deleteQueue(vehicleId);
+      res.status(200).json(deletedQueue);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
   }
-});
+);
 
 /**
  * @swagger
- * /queues/location/{location}:
+ * /api/queues/location/{location}:
  *   get:
  *     summary: Get queues by location
  *     description: Returns a list of queues filtered by a specific location.
@@ -255,19 +296,22 @@ queueRoutes.delete("/queues/:vehicleId", async (req: Request, res: Response) => 
  *       400:
  *         description: Error fetching queues by location.
  */
-queueRoutes.get("/queues/location/:location", async (req: Request, res: Response) => {
-  try {
-    const location = req.params.location as QueueLocation;
-    const queues = await getQueuesByLocation(location);
-    res.status(200).json(queues);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+queueRoutes.get(
+  "/queues/location/:location",
+  async (req: Request, res: Response) => {
+    try {
+      const location = req.params.location as QueueLocation;
+      const queues = await getQueuesByLocation(location);
+      res.status(200).json(queues);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
   }
-});
+);
 
 /**
  * @swagger
- * /queues/count/location/{location}:
+ * /api/queues/count/location/{location}:
  *   get:
  *     summary: Get count of queues by location
  *     description: Returns the count of queues at a specific location.
@@ -295,19 +339,22 @@ queueRoutes.get("/queues/location/:location", async (req: Request, res: Response
  *       400:
  *         description: Error fetching count by location.
  */
-queueRoutes.get("/queues/count/location/:location", async (req: Request, res: Response) => {
-  try {
-    const location = req.params.location as QueueLocation;
-    const count = await getCountByLocation(location);
-    res.status(200).json({ count });
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+queueRoutes.get(
+  "/queues/count/location/:location",
+  async (req: Request, res: Response) => {
+    try {
+      const location = req.params.location as QueueLocation;
+      const count = await getCountByLocation(location);
+      res.status(200).json({ count });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
   }
-});
+);
 
 /**
  * @swagger
- * /queues/overview:
+ * /api/queues/overview:
  *   get:
  *     summary: Get queue overview
  *     description: Returns an overview of queues at different locations.
@@ -339,6 +386,5 @@ queueRoutes.get("/queues/overview", async (req: Request, res: Response) => {
     res.status(400).json({ message: error.message });
   }
 });
-
 
 export default queueRoutes;

@@ -94,7 +94,9 @@ export const fetchFleets = async (user?: User) => {
 
 export const getFleetCount = async (user?: User) => {
   if (!user) return 0;
+  console.log({ user });
   const roleId = user.roleId;
+  console.log({ roleId });
 
   const role = await prisma.role.findUnique({ where: { id: roleId } });
 
