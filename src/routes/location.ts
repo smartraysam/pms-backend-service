@@ -31,18 +31,19 @@ const locationRoutes = Router();
  *     requestBody:
  *       required: true
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
  *            type: object
- *           properties:
- *            address:
- *             type: string
- *            name:
- *             type: string
- *            adminId:
- *             type: integer
- *            logo:
- *              type: string
+ *            properties:
+ *              address:
+ *                type: string
+ *                example: Lagos, Nigeria
+ *              name:
+ *                type: string
+ *                example: Plaza
+ *              logo:
+ *                type: string
+ *                example: "https://example.com/logo.png"
  *     responses:
  *       200:
  *         description: Location updated successfully.
@@ -53,6 +54,7 @@ const locationRoutes = Router();
  */
 locationRoutes.post("/locations", async (req: Request, res: Response) => {
   try {
+    req.body.adminId = req.user.userId;
     await createNewLocation(req.body);
     res.status(201).json({ message: "Location created successfully" });
   } catch (error: any) {
@@ -70,19 +72,20 @@ locationRoutes.post("/locations", async (req: Request, res: Response) => {
  *      - bearerAuth: []
  *     requestBody:
  *       required: true
- *       content:
- *         multipart/form-data:
+*       content:
+ *         application/json:
  *           schema:
  *            type: object
- *           properties:
- *            address:
- *             type: string
- *            name:
- *             type: string
- *            adminId:
- *             type: integer
- *            logo:
- *              type: string
+ *            properties:
+ *              address:
+ *                type: string
+ *                example: Lagos, Nigeria
+ *              name:
+ *                type: string
+ *                example: Plaza
+ *              logo:
+ *                type: string
+ *                example: "https://example.com/logo.png"
  *     responses:
  *       200:
  *         description: Location updated successfully.

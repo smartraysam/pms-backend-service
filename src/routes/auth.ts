@@ -109,10 +109,10 @@ authRoutes.post("/auth/register", async (req: Request, res: Response) => {
  *             properties:
  *               email:
  *                 type: string
- *                 example: "user@example.com"
+ *                 example: "janedoe@example.com"
  *               password:
  *                 type: string
- *                 example: "password123"
+ *                 example: "strongpassword123"
  *     responses:
  *       200:
  *         description: Login successful
@@ -160,7 +160,7 @@ authRoutes.post("/auth/login", async (req: Request, res: Response) => {
  *             properties:
  *               email:
  *                 type: string
- *                 example: "user@example.com"
+ *                 example: "janedoe@example.com"
  *     responses:
  *       200:
  *         description: Token sent to email

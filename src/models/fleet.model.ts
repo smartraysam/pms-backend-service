@@ -20,11 +20,10 @@ export const createFleet = async (fleetData: Prisma.FleetCreateInput) => {
       await prisma.fleet.update({
         where: { id: fleet.id },
         data: fleetData,
-
       });
       return fleet;
     } else {
-     fleet = await prisma.fleet.create({
+      fleet = await prisma.fleet.create({
         data: {
           name: fleetData.name,
           email: fleetData.email,
@@ -47,14 +46,18 @@ export const createFleet = async (fleetData: Prisma.FleetCreateInput) => {
 export const fetchFleets = async (user?: User) => {
   if (!user) return [];
 
-  const role = user.role;
+  const roleId = user.roleId;
 
-  if (role === ROLES.SUPER_MANAGER)
+  const role = await prisma.role.findUnique({ where: { id: roleId } });
+
+  if (!role) return [];
+
+  if (role.name === ROLES.SUPER_MANAGER)
     return await prisma.fleet.findMany({
       include: { _count: { select: { vehicles: true } } },
     });
 
-  if (role === ROLES.LOCATION_MANAGER) {
+  if (role.name === ROLES.LOCATION_MANAGER) {
     const location = await prisma.location.findFirst({
       where: { adminId: parseInt(user.id) },
     });
@@ -69,7 +72,7 @@ export const fetchFleets = async (user?: User) => {
     });
   }
 
-  if (role === ROLES.OPERATIONAL_MANAGER) {
+  if (role.name === ROLES.OPERATIONAL_MANAGER) {
     const userInfo = await getUser(user.id);
 
     if (!userInfo || !userInfo.managerId) return [];
@@ -91,11 +94,15 @@ export const fetchFleets = async (user?: User) => {
 
 export const getFleetCount = async (user?: User) => {
   if (!user) return 0;
-  const role = user.role;
+  const roleId = user.roleId;
 
-  if (role === ROLES.SUPER_MANAGER) return await prisma.fleet.count();
+  const role = await prisma.role.findUnique({ where: { id: roleId } });
 
-  if (role === ROLES.LOCATION_MANAGER) {
+  if (!role) return [];
+
+  if (role.name === ROLES.SUPER_MANAGER) return await prisma.fleet.count();
+
+  if (role.name === ROLES.LOCATION_MANAGER) {
     const location = await prisma.location.findFirst({
       where: { adminId: parseInt(user.id) },
     });
@@ -107,7 +114,7 @@ export const getFleetCount = async (user?: User) => {
     });
   }
 
-  if (role === ROLES.OPERATIONAL_MANAGER) {
+  if (role.name === ROLES.OPERATIONAL_MANAGER) {
     const userInfo = await getUser(user.id);
 
     if (!userInfo || !userInfo.managerId) return 0;

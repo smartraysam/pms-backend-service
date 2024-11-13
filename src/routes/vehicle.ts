@@ -50,6 +50,8 @@ const vehicleRoutes = Router();
  *                 type: string
  *               fleetId:
  *                 type: integer
+ *               mobile:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Vehicle created or updated successfully.
@@ -98,12 +100,6 @@ vehicleRoutes.post("/vehicles/create", async (req: Request, res: Response) => {
  *     tags: [Vehicle]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: search
- *         schema:
- *           type: string
- *         description: Optional search term to filter vehicles by name or number.
  *     responses:
  *       200:
  *         description: List of vehicles.

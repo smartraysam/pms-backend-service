@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import userRoutes from "@/routes/user";
 import { requestLogger, errorHandler, authenticate } from "./middleware"; // Import middleware
@@ -10,10 +10,8 @@ import tagRoutes from "@/routes/tags";
 import queueRoutes from "./routes/queue";
 import parkActivityRoutes from "./routes/park-activites";
 import authRoutes from "./routes/auth";
-import jwt from "jsonwebtoken";
 import fleetRoutes from "./routes/fleet";
 import locationRoutes from "./routes/location";
-const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"; // Replace with env variable in production
 
 const app = express();
 const prisma = new PrismaClient();
@@ -47,7 +45,7 @@ process.on("SIGINT", async () => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Swagger docs available at http://localhost:${PORT}/api/docs`);

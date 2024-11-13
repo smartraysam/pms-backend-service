@@ -17,59 +17,53 @@ export const getLocations = async () => {
 };
 
 export const createNewLocation = async (data: RegisterLocation) => {
-  const {
-    locationAddress,
-    locationName,
-    userId
-  } = data;
-
+  console.log({ data });  
+  const { address, name, adminId, logo } = data;
 
   const locationExists = await prisma.location.findFirst({
-    where: { address: locationAddress, adminId: userId, name: locationName },
+    where: { address, adminId, name },
   });
 
-  if (locationExists) throw new Error("Location already exists");
+  if (locationExists !==null) throw new Error("Location already exists");
 
   // create location
-  await prisma.location.create({
+ const location = await prisma.location.create({
     data: {
-      address: locationAddress,
-      name: locationName,
-      adminId: userId,
+      address,
+      name,
+      adminId,
+      logo
     },
   });
+  return location;  
 };
 
 export const updateLocation = async (
   data: RegisterLocation,
-  locationId: number,
+  locationId: number
 ) => {
   const location = await prisma.location.findUniqueOrThrow({
     where: { id: locationId },
   });
 
-  const {
-    locationAddress,
-    locationName,
-  } = data;
-
+  const { address, name, logo } = data;
 
   const locationUpdate = {
-    name: locationName,
-    address: locationAddress,
+    name,
+    address,
+    logo
   };
 
   const locationExists = await prisma.location.findFirst({
     where: {
       adminId: location.adminId,
-      name: locationName,
+      name: name,
       NOT: { id: locationId },
     },
   });
 
   if (locationExists)
     throw new Error("Another location with this name already exists");
-
 
   await prisma.location.update({
     where: { id: locationId },
@@ -108,7 +102,7 @@ export const getUserLocation = async (userId: string) => {
 
 export const updateUserLocation = async (
   userId: string,
-  locationProps: UpdateLocationProps,
+  locationProps: UpdateLocationProps
 ) => {
   const location = await prisma.location.findFirst({
     where: { adminId: parseInt(userId) },

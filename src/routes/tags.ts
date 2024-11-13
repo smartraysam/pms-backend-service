@@ -15,7 +15,7 @@ const tagRoutes = Router();
 
 /**
  * @swagger
- * /tags:
+ * /api/tags:
  *   post:
  *     summary: Create or retrieve a tag by its ID
  *     description: If a tag with the specified `tagId` exists, it retrieves it. Otherwise, it creates a new tag with that `tagId`.
@@ -144,7 +144,7 @@ tagRoutes.post("/tag/unlink-tag", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /get-tag:
+ * /api/get-tag:
  *   get:
  *     summary: Retrieve tags
  *     description: Retrieves tags based on optional status filter.
@@ -174,7 +174,7 @@ tagRoutes.get("/tag/get-tag", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /delete-tag:
+ * /api/delete-tag:
  *   post:
  *     summary: Delete old unlinked tags
  *     description: Deletes all unlinked tags except the latest two.

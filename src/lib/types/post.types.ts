@@ -1,9 +1,10 @@
 import { AuditLog } from ".";
 
 export type RegisterLocation = {
-  locationName: string;
-  locationAddress: string;
-  userId: number;
+  name: string;
+  address: string;
+  adminId: number;
+  logo?: string;
 };
 
 export type NewAdminData = {

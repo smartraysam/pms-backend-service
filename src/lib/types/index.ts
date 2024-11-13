@@ -37,7 +37,7 @@ export type Role = "Operational Manager" | "Location Manager" | "Super Manager";
 export type User = {
   id: string;
   email: string;
-  role: Role;
+  roleId: number ;
   logo?: string;
   name: string;
   location?: Location;

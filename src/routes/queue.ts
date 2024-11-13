@@ -11,6 +11,8 @@ const queueRoutes = Router();
  *     summary: Get all queues
  *     description: Returns a list of all queue entries.
  *     tags: [Queue]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of all queues.
@@ -39,6 +41,8 @@ queueRoutes.get("/queues", async (req: Request, res: Response) => {
  *     summary: Get a queue by vehicle ID
  *     description: Fetches a queue entry for a specified vehicle ID.
  *     tags: [Queue]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: vehicleId
@@ -73,6 +77,8 @@ queueRoutes.get("/queues/:vehicleId", async (req: Request, res: Response) => {
  *     summary: Create a new queue entry
  *     description: Adds a new queue entry with specified data.
  *     tags: [Queue]
+ *     security:
+ *      - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -128,6 +134,8 @@ queueRoutes.post("/queues", async (req: Request, res: Response) => {
  *     summary: Update a queue entry
  *     description: Updates a queue entry based on vehicle ID with specified data.
  *     tags: [Queue]
+ *     security:
+ *     - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: vehicleId
@@ -189,6 +197,8 @@ queueRoutes.patch("/queues/:vehicleId", async (req: Request, res: Response) => {
  *     summary: Delete a queue entry by vehicle ID
  *     description: Deletes a queue entry for the specified vehicle ID.
  *     tags: [Queue]
+ *     security:
+ *     - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: vehicleId
@@ -223,6 +233,8 @@ queueRoutes.delete("/queues/:vehicleId", async (req: Request, res: Response) => 
  *     summary: Get queues by location
  *     description: Returns a list of queues filtered by a specific location.
  *     tags: [Queue]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: location
@@ -260,6 +272,8 @@ queueRoutes.get("/queues/location/:location", async (req: Request, res: Response
  *     summary: Get count of queues by location
  *     description: Returns the count of queues at a specific location.
  *     tags: [Queue]
+ *     security:
+ *      - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: location
@@ -298,6 +312,8 @@ queueRoutes.get("/queues/count/location/:location", async (req: Request, res: Re
  *     summary: Get queue overview
  *     description: Returns an overview of queues at different locations.
  *     tags: [Queue]
+ *     security:
+ *      - bearerAuth: []
  *     responses:
  *       200:
  *         description: Overview of queues at various locations.
