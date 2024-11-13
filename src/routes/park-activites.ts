@@ -13,11 +13,13 @@ const parkActivityRoutes = Router();
 
 /**
  * @swagger
- * /park-activities:
+ * /api/park-activities:
  *   post:
  *     summary: Create a new park activity
  *     description: Creates a new park activity entry for a vehicle.
  *     tags: [ParkActivities]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -56,11 +58,13 @@ parkActivityRoutes.post(
 
 /**
  * @swagger
- * /park-activities:
+ * /api/park-activities:
  *   get:
  *     summary: Get all park activities
  *     description: Returns a list of all park activities.
  *     tags: [ParkActivities]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of all park activities.
@@ -74,7 +78,7 @@ parkActivityRoutes.post(
  *         description: Error fetching park activities.
  */
 parkActivityRoutes.get(
-  "/park-activities",
+  "/api/park-activities",
   async (req: Request, res: Response) => {
     try {
       const parkActivities = await getAllParkActivities();
@@ -87,11 +91,13 @@ parkActivityRoutes.get(
 
 /**
  * @swagger
- * /park-activities/{id}:
+ * /api/park-activities/{id}:
  *   get:
  *     summary: Get a park activity by ID
  *     description: Returns a single park activity by its ID.
  *     tags: [ParkActivities]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -120,11 +126,13 @@ parkActivityRoutes.get(
 
 /**
  * @swagger
- * /park-activities/count:
+ * /api/park-activities/count:
  *   get:
  *     summary: Get total count of park activities
  *     description: Returns the total count of park activities.
  *     tags: [ParkActivities]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Count of park activities.
@@ -143,11 +151,13 @@ parkActivityRoutes.get(
 
 /**
  * @swagger
- * /park-activities/parked-vehicles/{year}:
+ * /api/park-activities/parked-vehicles/{year}:
  *   get:
  *     summary: Get parked vehicles by month
  *     description: Returns the count of parked vehicles per month for a specified year.
  *     tags: [ParkActivities]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: year
@@ -174,7 +184,7 @@ parkActivityRoutes.get(
 
 /**
  * @swagger
- * /park-activities/total-rides/{year}:
+ * /api/park-activities/total-rides/{year}:
  *   get:
  *     summary: Get total rides for the year
  *     description: Returns the total number of complete rides for a specified year.
@@ -205,7 +215,7 @@ parkActivityRoutes.get(
 
 /**
  * @swagger
- * /park-activities/vehicles-in-park:
+ * /api/park-activities/vehicles-in-park:
  *   get:
  *     summary: Get count of vehicles currently in park
  *     description: Returns the count of vehicles that are currently in the park.

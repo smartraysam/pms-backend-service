@@ -21,6 +21,8 @@ const queueRoutes = Router();
  *     summary: Process queues
  *     description: Processes queues to ensure they are in the correct order and ensure queue are move to next location.
  *     tags: [Queue]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Queues processed successfully.

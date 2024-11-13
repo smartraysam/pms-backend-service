@@ -149,6 +149,8 @@ tagRoutes.post("/tag/unlink-tag", async (req: Request, res: Response) => {
  *     summary: Retrieve tags
  *     description: Retrieves tags based on optional status filter.
  *     tags: [Tags]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: status
@@ -179,6 +181,8 @@ tagRoutes.get("/tag/get-tag", async (req: Request, res: Response) => {
  *     summary: Delete old unlinked tags
  *     description: Deletes all unlinked tags except the latest two.
  *     tags: [Tags]
+ *     security:
+ *      - bearerAuth: []
  *     responses:
  *       200:
  *         description: Old unlinked tags deleted successfully.

@@ -307,7 +307,7 @@ vehicleRoutes.get(
 
 /**
  * @swagger
- * /vehicles/queue-overview:
+ * /api/vehicles/queue-overview:
  *   get:
  *     summary: Get queue overview per company
  *     description: Provides a queue overview based on location ID, summarizing transit status per company.

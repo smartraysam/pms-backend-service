@@ -18,7 +18,7 @@ const accessRoutes = Router();
 
 /**
  * @swagger
- * /access-control:
+ * /api/access-control:
  *   post:
  *     summary: Handles access control with device and tag validation, endpoint is to be call in access control device.
  *     description: Deletes a user account based on the provided ID.

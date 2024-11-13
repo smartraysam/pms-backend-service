@@ -15,7 +15,7 @@ const notificationRoutes = Router();
 
 /**
  * @swagger
- * /notifications:
+ * /api/notifications:
  *   post:
  *     summary: Create a new notification for a user
  *     tags: [Notifications]
@@ -59,7 +59,7 @@ notificationRoutes.post(
 
 /**
  * @swagger
- * /notifications/location:
+ * /api/notifications/location:
  *   post:
  *     summary: Create a location-based notification
  *     tags: [Notifications]
@@ -102,7 +102,7 @@ notificationRoutes.post(
 
 /**
  * @swagger
- * /notifications/user/{userId}:
+ * /api/notifications/user/{userId}:
  *   get:
  *     summary: Get notifications for a specific user
  *     tags: [Notifications]
@@ -131,7 +131,7 @@ notificationRoutes.get(
 
 /**
  * @swagger
- * /notifications/resend/{notificationId}:
+ * /api/notifications/resend/{notificationId}:
  *   post:
  *     summary: Resend a notification by ID
  *     tags: [Notifications]
@@ -162,7 +162,7 @@ notificationRoutes.post(
 
 /**
  * @swagger
- * /notifications/{notificationId}:
+ * /api/notifications/{notificationId}:
  *   put:
  *     summary: Update a notification message
  *     tags: [Notifications]
@@ -199,7 +199,7 @@ notificationRoutes.put(
 
 /**
  * @swagger
- * /notifications/{notificationId}:
+ * /api/notifications/{notificationId}:
  *   delete:
  *     summary: Delete a notification by ID
  *     tags: [Notifications]
@@ -230,7 +230,7 @@ notificationRoutes.delete(
 
 /**
  * @swagger
- * /notifications/incoming/{userId}:
+ * /api/notifications/incoming/{userId}:
  *   get:
  *     summary: Get incoming notifications for a user
  *     tags: [Notifications]
@@ -259,7 +259,7 @@ notificationRoutes.get(
 
 /**
  * @swagger
- * /notifications/incoming/{userId}/read-all:
+ * /api/notifications/incoming/{userId}/read-all:
  *   put:
  *     summary: Mark all incoming notifications as read for a user
  *     tags: [Notifications]
@@ -288,7 +288,7 @@ notificationRoutes.put(
 
 /**
  * @swagger
- * /notifications/incoming/read/{notificationId}:
+ * /api/notifications/incoming/read/{notificationId}:
  *   put:
  *     summary: Mark a single incoming notification as read
  *     tags: [Notifications]
