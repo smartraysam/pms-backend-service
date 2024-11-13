@@ -30,7 +30,7 @@ const authRoutes = Router();
  *                 example: janedoe@example.com
  *               phone_number:
  *                 type: string
- *                 example: "+987654321"
+ *                 example: "2347065384842"
  *               password:
  *                 type: string
  *                 example: "strongpassword123"
