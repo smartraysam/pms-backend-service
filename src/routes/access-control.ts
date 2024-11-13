@@ -76,15 +76,17 @@ accessRoutes.post("/access-control", async (req: Request, res: Response) => {
       res.status(200).json(accessDeniedResponse(deviceId));
       return;
     }
-
+    console.log(tag);
     if (tag.status !== TagStatus.Assigned) {
       res.status(200).json(accessDeniedResponse(deviceId));
     }
     const vehicle = await getVehicleByTagId(tag.id);
+    console.log(vehicle);
     if (!vehicle || vehicle.status === "banned") {
       res.status(200).json(accessDeniedResponse(deviceId));
     }
 
+    console.log(deviceId, vehicle.id);
     const resp = await handleAccessControl(deviceId, vehicle.id);
     await updateDeviceById(deviceId, ControlState.Close);
     res.status(200).json(resp);
@@ -115,7 +117,7 @@ const accessGrantedResponse = async (deviceId: string) => {
 };
 const handleAccessControl = async (deviceId: string, vehicleId: number) => {
   switch (deviceId) {
-    case "Device1": {
+    case "EntPAbjAkinon78": {
       // @ts-ignore
       const queue = await getQueueById(vehicleId);
       if (queue) {

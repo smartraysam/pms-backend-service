@@ -3,8 +3,9 @@ import prisma from "@/lib/prisma";
 import { User } from "@/lib/types";
 import { Prisma } from "@prisma/client";
 import { getUser } from "./user.model";
+import { RegisterFleet } from "@/lib/types/post.types";
 
-export const createFleet = async (fleetData: Prisma.FleetCreateInput) => {
+export const createFleet = async (fleetData: RegisterFleet) => {
   try {
     let fleet = await prisma.fleet.findFirst({
       where: {
@@ -32,6 +33,7 @@ export const createFleet = async (fleetData: Prisma.FleetCreateInput) => {
           mobile: fleetData.mobile,
           walletBalance: fleetData.walletBalance,
           status: fleetData.status,
+          baseLocationId: fleetData.baseLocationId,
         },
       });
     }

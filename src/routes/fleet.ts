@@ -47,6 +47,8 @@ const  fleetRoutes = Router();
  *                 type: number
  *               status:
  *                 type: number
+ *               baseLocationId:
+ *                 type: number
  *     responses:
  *       200:
  *         description: Fleet created or updated successfully

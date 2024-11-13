@@ -7,6 +7,17 @@ export type RegisterLocation = {
   logo?: string;
 };
 
+export type RegisterFleet = {
+  name: string;
+  email: string;
+  company: string;
+  fleetId: number;
+  mobile: string;
+  walletBalance: number;
+  status: number;
+  baseLocationId: number;
+
+};
 export type NewAdminData = {
   name: string;
   email: string;

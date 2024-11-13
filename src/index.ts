@@ -27,14 +27,13 @@ app.get("/health", (req: Request, res: Response) => {
 });
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api", authRoutes);
-
+app.use("/api", accessRoutes);
 app.use(authenticate);
 app.use("/api", userRoutes);
 app.use("/api", vehicleRoutes);
 app.use("/api", tagRoutes);
 app.use("/api", queueRoutes);
 app.use("/api", parkActivityRoutes);
-app.use("/api", accessRoutes);
 app.use("/api", fleetRoutes);
 app.use("/api", deviceRoutes);
 app.use("/api", locationRoutes);
